@@ -12,13 +12,12 @@
 //Eviter redondance (func combat)
 //Equilibrage
 //Sort du Guerrier
-//Sort spécial pour le Boss ?
-//HUD Potion de mana
-
+//Potion ne peut pas use si max
 //Systeme de loot ? 
+//Porter l'hud M à GVC
 
 //Faire en sorte de pas perdre un tour quand utilise un input faux dans les menu combat
-//Débloque capacité au niveau 4 ?
+
 
 
 Magicien monMagicien("Magicien", 1, 700, 700, 5, 20, 4, 0, 100, 100, 100);
@@ -85,35 +84,48 @@ void mainGuerrier() {
 
 			//Menu d'attaque pour le guerrier envers le gobelin
 			int choix;
-			std::cin >> choix;
-			std::cout << std::endl;
-			if (choix == 1) {
-				system("cls");
-				monGuerrier.attaque(ennemi);
-			}
-			else if (choix == 2) {
-				system("cls");
-				monGuerrier.Defense();
-			}
-			else if (choix == 3) {
-				system("cls");
-				monGuerrier.utiliserPotion();
-			}
-			else if (choix == 4) {
-				system("cls");
-				monGuerrier.potionMana();
-			}
-			else if (choix == 5) {
-				system("cls");
-				monGuerrier.CoupTranchant(ennemi);
-			}
-			else if (choix == 6) {
-				system("cls");
-				monGuerrier.CoupDeBouclier(ennemi);
-			}
-			else {
-				std::cout << "Choix invalide. Veuillez saisir 1 pour attaquer, 2 pour se défendre, 3 pour utiliser une potion, ou 4 pour la compétence spéciale.\n";
-				continue;
+			bool choixValide = false;
+			do {
+				std::cin >> choix;
+				std::cout << std::endl;
+				if (std::cin.fail() || (choix < 1 || choix > 7) || (choix == 7 && monMagicien.getNiveau() < 4)) {
+					std::cin.clear(); // Efface l'état d'erreur du flux
+					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore les caractères restants dans le flux
+					std::cout << "Choix invalide. Veuillez saisir un choix valide.\n";
+				}
+				else {
+					choixValide = true;
+				}
+			} while (!choixValide);
+
+			// Effacer l'écran après avoir fait un choix valide
+			system("cls");
+
+			// Exécuter l'action en fonction du choix
+			switch (choix) {
+			case 1:
+				monMagicien.attaque(ennemi);
+				break;
+			case 2:
+				monMagicien.Defense();
+				break;
+			case 3:
+				monMagicien.utiliserPotion();
+				break;
+			case 4:
+				monMagicien.potionMana();
+				break;
+			case 5:
+				monMagicien.FireBolt(ennemi);
+				break;
+			case 6:
+				monMagicien.Siphon(ennemi);
+				break;
+			case 7:
+				monMagicien.ThunderBolt(ennemi);
+				break;
+			default:
+				break;
 			}
 			//Le gobelin attaque
 			ennemi.attaque(monGuerrier);
@@ -151,36 +163,50 @@ void mainGuerrier() {
 						std::cout << "Votre choix : ";
 
 						// Menu d'attaque du Guerrier contre le Boss
-						int choix;
-						std::cin >> choix;
-						std::cout << std::endl;
-						if (choix == 1) {
-							system("cls");
-							monGuerrier.attaque(boss);
-						}
-						else if (choix == 2) {
-							system("cls");
-							monGuerrier.Defense();
-						}
-						else if (choix == 3) {
-							system("cls");
-							monGuerrier.utiliserPotion();
-						}
-						else if (choix == 4) {
-							system("cls");
-							monGuerrier.potionMana();
-						}
-						else if (choix == 5) {
-							system("cls");
-							monGuerrier.CoupTranchant(boss);
-						}
-						else if (choix == 6) {
-							system("cls");
-							monGuerrier.CoupDeBouclier(boss);
-						}
-						else {
-							std::cout << "Choix invalide. Veuillez saisir 1 pour attaquer, 2 pour se défendre, 3 pour utiliser une potion, ou 4 pour la compétence spéciale.\n";
-							continue;
+						bool choixValideBoss = false;
+						int choixBoss;
+						do {
+							std::cin >> choixBoss;
+							std::cout << std::endl;
+							if (std::cin.fail() || (choixBoss < 1 || choixBoss > 7) || (choixBoss == 7 && monMagicien.getNiveau() < 4)) {
+								std::cin.clear(); // Efface l'état d'erreur du flux
+								std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore les caractères restants dans le flux
+								std::cout << "Choix invalide. Veuillez saisir un choix valide.\n";
+							}
+							else {
+								choixValideBoss = true;
+							}
+						} while (!choixValideBoss);
+
+						// Effacer l'écran après avoir fait un choix valide
+						system("cls");
+
+						// Exécuter l'action en fonction du choix
+						switch (choixBoss) {
+						case 1:
+							monMagicien.attaque(boss);
+							break;
+						case 2:
+							monMagicien.Defense();
+							break;
+						case 3:
+							monMagicien.utiliserPotion();
+							break;
+						case 4:
+							monMagicien.potionMana();
+							break;
+						case 5:
+							monMagicien.FireBolt(boss);
+							break;
+						case 6:
+							monMagicien.Siphon(boss);
+							break;
+						case 7:
+							monMagicien.ThunderBolt(boss);
+							break;
+						default:
+							// Cet endroit ne devrait pas être atteint car la validation garantit que le choix est dans les limites.
+							break;
 						}
 
 
@@ -216,6 +242,7 @@ void mainMagicien() {
 	//Variable pour faire des combats à la chaine et nommer les ennemies
 	int ennemisBattus = 0;
 	int bossBattu = 0;
+	int toursDepuisDernierSpecial = 0;
 
 	//Boucle de combat avec 25 combats
 	for (int i = 1; i <= 25; i++) {
@@ -227,10 +254,15 @@ void mainMagicien() {
 		Personnage ennemi(nomGobelin, 50 + i * 20, 20 + i * 5);
 		std::cout << "--------------------- " << "\n";
 		std::cout << "Combat entre " << monMagicien.getNom() << " et " << ennemi.getNom() << " !\n";
+		std::cout << "--------------------- " << "\n";
 
+		std::cout <<  " \n";
+		std::cout <<  " \n";
+		
 		//Boucle de combat tant que mon perso ou l'aderversaire est en vie
 		while (monMagicien.EstVivant() && ennemi.EstVivant()) {
-			std::cout << monMagicien.getNom() << "			 | HP : " << monMagicien.getHP() << "			| Mana : " << monMagicien.getMana() << "\n";
+			std::cout << monMagicien.getNom() << "			 | HP : " << monMagicien.getHP() << " / " << monMagicien.getHPMax() << "			| Mana : " << monMagicien.getMana() << " / " << monMagicien.getManaMax() << "\n";
+			std::cout << "Niveau : " << monMagicien.getNiveau() << std::endl;
 			std::cout << "Exp : " << monMagicien.getEXP() << " / " << monMagicien.getExpMax() << "\n";
 			std::cout << "\n";
 			std::cout << ennemi.getNom() << "			 | HP : " << ennemi.getHP() << "\n";
@@ -244,39 +276,55 @@ void mainMagicien() {
 			std::cout << "Compétences : " << "\n";
 			std::cout << "5. Fire Bolt			 | Degats : " << monMagicien.getDamage("FireBolt") << "			| MP : " << monMagicien.getManaCost("FireBolt") << std::endl;
 			std::cout << "6. Siphon			 | Degats : " << monMagicien.getDamage("Siphon") << "			| MP : " << monMagicien.getManaCost("Siphon") << std::endl;
+			if (monMagicien.getNiveau() >= 4) {
+			std::cout << "7. ThunderBolt			 | Degats : " << monMagicien.getDamage("ThunderBolt") << "			| MP : " << monMagicien.getManaCost("ThunderBolt") << std::endl;
+			}
 			std::cout << "Votre choix : ";
 
 			//Menu d'attaque pour le Magicien envers le gobelin
 			int choix;
-			std::cin >> choix;
-			std::cout << std::endl;
-			if (choix == 1) {
-				system("cls");
+			bool choixValide = false;
+			do {
+				std::cin >> choix;
+				std::cout << std::endl;
+				if (std::cin.fail() || (choix < 1 || choix > 7) || (choix == 7 && monMagicien.getNiveau() < 4)) {
+					std::cin.clear(); // Efface l'état d'erreur du flux
+					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore les caractères restants dans le flux
+					std::cout << "Choix invalide. Veuillez saisir un choix valide.\n";
+				}
+				else {
+					choixValide = true;
+				}
+			} while (!choixValide);
+
+			// Effacer l'écran après avoir fait un choix valide
+			system("cls");
+
+			// Exécuter l'action en fonction du choix
+			switch (choix) {
+			case 1:
 				monMagicien.attaque(ennemi);
-			}
-			else if (choix == 2) {
-				system("cls");
+				break;
+			case 2:
 				monMagicien.Defense();
-			}
-			else if (choix == 3) {
-				system("cls");
+				break;
+			case 3:
 				monMagicien.utiliserPotion();
-			}
-			else if (choix == 4) {
-				system("cls");
+				break;
+			case 4:
 				monMagicien.potionMana();
-			}
-			else if (choix == 5) {
-				system("cls");
+				break;
+			case 5:
 				monMagicien.FireBolt(ennemi);
-			}
-			else if (choix == 6) {
-				system("cls");
+				break;
+			case 6:
 				monMagicien.Siphon(ennemi);
-			}
-			else {
-				std::cout << "Choix invalide. Veuillez saisir 1 pour attaquer, 2 pour se défendre, 3 pour utiliser une potion, ou 4 pour la compétence spéciale.\n";
-				continue;
+				break;
+			case 7:
+				monMagicien.ThunderBolt(ennemi);
+				break;
+			default:
+				break;
 			}
 			//Le gobelin attaque
 			ennemi.attaque(monMagicien);
@@ -289,14 +337,15 @@ void mainMagicien() {
 				if (ennemisBattus % 5 == 0) {
 
 					// Initialise le Boss
-					std::string nomBoss = "Boss " + std::to_string(bossBattu + 1);
+					std::string nomBoss = "Zemmour " + std::to_string(bossBattu + 1);
 					Personnage boss(nomBoss, 500, 200);
 					std::cout << "--------------------- " << "\n";
 					std::cout << "Combat entre " << monMagicien.getNom() << " et " << boss.getNom() << " !\n";
 
 					// Tant que le personnage ou le boss est en vie, le combat continue
 					while (monMagicien.EstVivant() && boss.EstVivant()) {
-						std::cout << monMagicien.getNom() << "			 | HP : " << monMagicien.getHP() << "			| Mana : " << monMagicien.getMana() << "\n";
+						std::cout << monMagicien.getNom() << "			 | HP : " << monMagicien.getHP() << " / " << monMagicien.getHPMax() << "			| Mana : " << monMagicien.getMana() << " / " << monMagicien.getManaMax() << "\n";
+						std::cout << " Niveau : " << monMagicien.getNiveau() << std::endl;
 						std::cout << "Exp : " << monMagicien.getEXP() << " / " << monMagicien.getExpMax() << "\n";
 						std::cout << "\n";
 						std::cout << boss.getNom() << "				 | HP : " << boss.getHP() << "\n";
@@ -311,39 +360,56 @@ void mainMagicien() {
 						std::cout << "Compétences : " << "\n";
 						std::cout << "5. Fire Bolt			 | Degats : " << monMagicien.getDamage("FireBolt") << "			| MP : " << monMagicien.getManaCost("FireBolt") << std::endl;
 						std::cout << "6. Siphon			 | Degats : " << monMagicien.getDamage("Siphon") << "			| MP : " << monMagicien.getManaCost("Siphon") << std::endl;
+						if (monMagicien.getNiveau() >= 4) {
+							std::cout << "7. ThunderBolt			 | Degats : " << monMagicien.getDamage("ThunderBolt") << "			| MP : " << monMagicien.getManaCost("ThunderBolt") << std::endl;
+						}
 						std::cout << "Votre choix : ";
 
 						// Menu d'attaque du Magicien contre le Boss
-						int choix;
-						std::cin >> choix;
-						std::cout << std::endl;
-						if (choix == 1) {
-							system("cls");
+						bool choixValideBoss = false;
+						int choixBoss;
+						do {
+							std::cin >> choixBoss;
+							std::cout << std::endl;
+							if (std::cin.fail() || (choixBoss < 1 || choixBoss > 7) || (choixBoss == 7 && monMagicien.getNiveau() < 4)) {
+								std::cin.clear(); // Efface l'état d'erreur du flux
+								std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore les caractères restants dans le flux
+								std::cout << "Choix invalide. Veuillez saisir un choix valide.\n";
+							}
+							else {
+								choixValideBoss = true;
+							}
+						} while (!choixValideBoss);
+
+						// Effacer l'écran après avoir fait un choix valide
+						system("cls");
+
+						// Exécuter l'action en fonction du choix
+						switch (choixBoss) {
+						case 1:
 							monMagicien.attaque(boss);
-						}
-						else if (choix == 2) {
-							system("cls");
+							break;
+						case 2:
 							monMagicien.Defense();
-						}
-						else if (choix == 3) {
-							system("cls");
+							break;
+						case 3:
 							monMagicien.utiliserPotion();
-						}
-						else if (choix == 4) {
-							system("cls");
+							break;
+						case 4:
 							monMagicien.potionMana();
-						}
-						else if (choix == 5) {
-							system("cls");
+							break;
+						case 5:
 							monMagicien.FireBolt(boss);
-						}
-						else if (choix == 6) {
-							system("cls");
+							break;
+						case 6:
 							monMagicien.Siphon(boss);
-						}
-						else {
-							std::cout << "Choix invalide. Veuillez saisir 1 pour attaquer, 2 pour se défendre, 3 pour utiliser une potion, ou 4 pour la compétence spéciale.\n";
-							continue;
+							break;
+						case 7:
+							monMagicien.ThunderBolt(boss);
+							break;
+						default:
+							// Cet endroit ne devrait pas être atteint car la validation garantit que le choix est dans les limites.
+							break;
 						}
 
 
@@ -357,6 +423,14 @@ void mainMagicien() {
 
 						// Attaque du Boss
 						boss.attaque(monMagicien);
+						toursDepuisDernierSpecial++;
+						if (toursDepuisDernierSpecial == 3) {
+							// Appel de la fonction pour le coup spécial du boss
+							boss.ExpulsionDuTerritoire(monMagicien);
+
+							// Réinitialisation du compteur de tours depuis le dernier coup spécial
+							toursDepuisDernierSpecial = 0;
+						}
 						std::cout << "--------------------- " << "\n";
 					}
 				}

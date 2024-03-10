@@ -37,6 +37,9 @@ int Magicien::getManaCost(std::string spellName) {
     else if (spellName == "Siphon") {
         return 30;
     }
+    else if (spellName == "ThunderBolt") {
+        return 70;
+    }
     else {
         std::cout << "Sort inconnu !" << std::endl;
         return 0; // Retourne 0 pour les sorts inconnus
@@ -51,8 +54,24 @@ int Magicien::getDamage(std::string spellName) {
     else if (spellName == "Siphon") {
         return this->getINT() * 3;
     }
+    else if (spellName == "ThunderBolt") {
+        return this->getINT() * 7;
+    }
     else {
         std::cout << "Sort inconnu !" << std::endl;
         return 0; // Retourne 0 pour les sorts inconnus
     }
 }
+
+void Magicien::ThunderBolt(Personnage& ennemi) {
+
+    if (!utiliseMana(70)) {
+        return;
+    }
+
+    //Dégats fois 5 basé sur la INT
+    int degats = this->getINT() * 7;
+    std::cout << this->getNom() << " utilise FireBolt sur " << ennemi.getNom() << " et inflige " << degats << " dégâts !" << std::endl;
+    ennemi.recevoirDegats(degats);
+}
+

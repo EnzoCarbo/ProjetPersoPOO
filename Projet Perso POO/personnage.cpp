@@ -41,6 +41,12 @@ void Personnage::attaque(Personnage& cible)
     cible.recevoirDegats(ATK);
 }
 
+void Personnage::ExpulsionDuTerritoire(Personnage& cible) {
+    std::cout << "--------------------- " << "\n";
+    std::cout << nom << "utilise Expulsion Du Territoire " << cible.getNom() << std::endl;
+    cible.recevoirDegats(ATK * 3);
+}
+
 //Fonction pour recevoir des dégats
 void Personnage::recevoirDegats(int degats)
 {
@@ -117,37 +123,48 @@ void Personnage::Defense() {
     EnDefense = true;
 }
 
-//Fonction pour utiliser des potions de HP
 void Personnage::utiliserPotion() {
-    // Si une potion de vie est présente dans le vecteur
-    auto it = std::find(potions.begin(), potions.end(), "Potion de vie");
-    if (it != potions.end()) {
-        std::cout << nom << " utilise une potion de vie et récupère 200 points de vie.\n";
-        HP += 200;
-        if (HP > HPMax) {
-            HP = HPMax;
+    // Vérifie si les points de vie actuels sont inférieurs au maximum
+    if (HP < HPMax) {
+        // Si une potion de vie est présente dans le vecteur
+        auto it = std::find(potions.begin(), potions.end(), "Potion de vie");
+        if (it != potions.end()) {
+            std::cout << nom << " utilise une potion de vie et récupère 200 points de vie.\n";
+            HP += 200;
+            if (HP > HPMax) {
+                HP = HPMax;
+            }
+            potions.erase(it); // Supprime la potion de vie utilisée
         }
-        potions.erase(it); // Supprime la potion de vie utilisée
+        else {
+            std::cout << "Aucune potion de vie disponible.\n";
+        }
     }
     else {
-        std::cout << "Aucune potion de vie disponible.\n";
+        std::cout << "Vos points de vie sont déjà au maximum.\n";
     }
 }
 
 
 void Personnage::potionMana() {
-    // Si une potion de Mana est présente dans le vecteur
-    auto it = std::find(potions.begin(), potions.end(), "Potion de Mana");
-    if (it != potions.end()) {
-        std::cout << nom << " utilise une potion de Mana et récupère 50 points de Mana.\n";
-        Mana += 50; // Vous pouvez ajuster la quantité de mana récupérée selon vos besoins
-        if (Mana > ManaMax) {
-            Mana = ManaMax;
+    // Vérifie si les points de mana actuels sont inférieurs au maximum
+    if (Mana < ManaMax) {
+        // Si une potion de Mana est présente dans le vecteur
+        auto it = std::find(potions.begin(), potions.end(), "Potion de Mana");
+        if (it != potions.end()) {
+            std::cout << nom << " utilise une potion de Mana et récupère 50 points de Mana.\n";
+            Mana += 50; // Vous pouvez ajuster la quantité de mana récupérée selon vos besoins
+            if (Mana > ManaMax) {
+                Mana = ManaMax;
+            }
+            potions.erase(it); // Supprime la potion de Mana utilisée
         }
-        potions.erase(it); // Supprime la potion de Mana utilisée
+        else {
+            std::cout << "Aucune potion de Mana disponible.\n";
+        }
     }
     else {
-        std::cout << "Aucune potion de Mana disponible.\n";
+        std::cout << "Vos points de mana sont déjà au maximum.\n";
     }
 }
 

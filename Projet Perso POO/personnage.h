@@ -31,7 +31,7 @@ public:
     bool EstVivant();
 
     void attaque(Personnage& cible);
-    
+    void ExpulsionDuTerritoire(Personnage& cible);
     void recevoirDegats(int degats);
     void Defense();
     void recevoirMP(int mana);
