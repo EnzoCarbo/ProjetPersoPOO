@@ -13,10 +13,11 @@
 //Equilibrage
 //Sort du Guerrier
 //Sort spécial pour le Boss ?
-//Potion de Mana
+//HUD Potion de mana
+
+//Systeme de loot ? 
 
 //Faire en sorte de pas perdre un tour quand utilise un input faux dans les menu combat
-//HUD G C V
 //Débloque capacité au niveau 4 ?
 
 
@@ -73,11 +74,13 @@ void mainGuerrier() {
 			std::cout << "Que voulez-vous faire ?" << std::endl;
 			std::cout << "1. Attaquer			 | Degats : " << monGuerrier.getATK() << std::endl;
 			std::cout << "2. Se mettre en position defense | Degats recus /2" << std::endl;
-			std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monGuerrier.getQuantitéPotions() << std::endl;
+			std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monGuerrier.getQuantitePotionsHP() << std::endl;
+			std::cout << "4. Utiliser Potion de MP	 | MP + 50			| Quantité : " << monMagicien.getQuantitePotionsMana() << std::endl;
+
 			std::cout << "--------------------- " << "\n";
 			std::cout << "Compétences : " << "\n";
-			std::cout << "4. Coup Tranchant	 	 | Degats : " << monGuerrier.getDamage("CoupTranchant") << "			| MP : " << monGuerrier.getManaCost("CoupTranchant") << std::endl;
-			std::cout << "5. Coup De Bouclier	 	 | Degats : " << monGuerrier.getDamage("CoupDeBouclier") << "			| MP : " << monGuerrier.getManaCost("CoupDeBouclier") << std::endl;
+			std::cout << "5. Coup Tranchant	 	 | Degats : " << monGuerrier.getDamage("CoupTranchant") << "			| MP : " << monGuerrier.getManaCost("CoupTranchant") << std::endl;
+			std::cout << "6. Coup De Bouclier	 	 | Degats : " << monGuerrier.getDamage("CoupDeBouclier") << "			| MP : " << monGuerrier.getManaCost("CoupDeBouclier") << std::endl;
 			std::cout << "Votre choix : ";
 
 			//Menu d'attaque pour le guerrier envers le gobelin
@@ -98,9 +101,13 @@ void mainGuerrier() {
 			}
 			else if (choix == 4) {
 				system("cls");
-				monGuerrier.CoupTranchant(ennemi);
+				monGuerrier.potionMana();
 			}
 			else if (choix == 5) {
+				system("cls");
+				monGuerrier.CoupTranchant(ennemi);
+			}
+			else if (choix == 6) {
 				system("cls");
 				monGuerrier.CoupDeBouclier(ennemi);
 			}
@@ -134,11 +141,13 @@ void mainGuerrier() {
 						std::cout << "Que voulez-vous faire ?" << std::endl;
 						std::cout << "1. Attaquer			 | Degats : " << monGuerrier.getATK() << std::endl;
 						std::cout << "2. Se mettre en position defense | Degats recus /2" << std::endl;
-						std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monGuerrier.getQuantitéPotions() << std::endl;
+						std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monGuerrier.getQuantitePotionsHP() << std::endl;
+						std::cout << "4. Utiliser Potion de MP	 | MP + 50			| Quantité : " << monMagicien.getQuantitePotionsMana() << std::endl;
+
 						std::cout << "--------------------- " << "\n";
 						std::cout << "Compétences : " << "\n";
-						std::cout << "4. Coup Tranchant		  | Degats : " << monGuerrier.getDamage("CoupTranchant") << "			| MP : " << monGuerrier.getManaCost("CoupTranchant") << std::endl;
-						std::cout << "5. Coup De Bouclier		  | Degats : " << monGuerrier.getDamage("CoupDeBouclier") << "			| MP : " << monGuerrier.getManaCost("CoupDeBouclier") << std::endl;
+						std::cout << "5. Coup Tranchant		  | Degats : " << monGuerrier.getDamage("CoupTranchant") << "			| MP : " << monGuerrier.getManaCost("CoupTranchant") << std::endl;
+						std::cout << "6. Coup De Bouclier		  | Degats : " << monGuerrier.getDamage("CoupDeBouclier") << "			| MP : " << monGuerrier.getManaCost("CoupDeBouclier") << std::endl;
 						std::cout << "Votre choix : ";
 
 						// Menu d'attaque du Guerrier contre le Boss
@@ -159,9 +168,13 @@ void mainGuerrier() {
 						}
 						else if (choix == 4) {
 							system("cls");
-							monGuerrier.CoupTranchant(boss);
+							monGuerrier.potionMana();
 						}
 						else if (choix == 5) {
+							system("cls");
+							monGuerrier.CoupTranchant(boss);
+						}
+						else if (choix == 6) {
 							system("cls");
 							monGuerrier.CoupDeBouclier(boss);
 						}
@@ -225,11 +238,12 @@ void mainMagicien() {
 			std::cout << "Que voulez-vous faire ?" << std::endl;
 			std::cout << "1. Attaquer			 | Degats : " << monMagicien.getATK() << std::endl;
 			std::cout << "2. Se mettre en position defense | Degats recus /2" << std::endl;
-			std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monMagicien.getQuantitéPotions() << std::endl;
+			std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monMagicien.getQuantitePotionsHP() << std::endl;
+			std::cout << "4. Utiliser Potion de MP	 | MP + 50			| Quantité : " << monMagicien.getQuantitePotionsMana() << std::endl;
 			std::cout << "--------------------- " << "\n";
 			std::cout << "Compétences : " << "\n";
-			std::cout << "4. Fire Bolt			 | Degats : " << monMagicien.getDamage("FireBolt") << "			| MP : " << monMagicien.getManaCost("FireBolt") << std::endl;
-			std::cout << "5. Siphon			 | Degats : " << monMagicien.getDamage("Siphon") << "			| MP : " << monMagicien.getManaCost("Siphon") << std::endl;
+			std::cout << "5. Fire Bolt			 | Degats : " << monMagicien.getDamage("FireBolt") << "			| MP : " << monMagicien.getManaCost("FireBolt") << std::endl;
+			std::cout << "6. Siphon			 | Degats : " << monMagicien.getDamage("Siphon") << "			| MP : " << monMagicien.getManaCost("Siphon") << std::endl;
 			std::cout << "Votre choix : ";
 
 			//Menu d'attaque pour le Magicien envers le gobelin
@@ -250,9 +264,13 @@ void mainMagicien() {
 			}
 			else if (choix == 4) {
 				system("cls");
-				monMagicien.FireBolt(ennemi);
+				monMagicien.potionMana();
 			}
 			else if (choix == 5) {
+				system("cls");
+				monMagicien.FireBolt(ennemi);
+			}
+			else if (choix == 6) {
 				system("cls");
 				monMagicien.Siphon(ennemi);
 			}
@@ -286,11 +304,13 @@ void mainMagicien() {
 						std::cout << "Que voulez-vous faire ?" << std::endl;
 						std::cout << "1. Attaquer			 | Degats : " << monMagicien.getATK() << std::endl;
 						std::cout << "2. Se mettre en position defense | Degats recus /2" << std::endl;
-						std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monMagicien.getQuantitéPotions() << std::endl;
+						std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monMagicien.getQuantitePotionsHP() << std::endl;
+						std::cout << "4. Utiliser Potion de MP	 | MP + 50			| Quantité : " << monMagicien.getQuantitePotionsMana() << std::endl;
+
 						std::cout << "--------------------- " << "\n";
 						std::cout << "Compétences : " << "\n";
-						std::cout << "4. Fire Bolt			 | Degats : " << monMagicien.getDamage("FireBolt") << "			| MP : " << monMagicien.getManaCost("FireBolt") << std::endl;
-						std::cout << "5. Siphon			 | Degats : " << monMagicien.getDamage("Siphon") << "			| MP : " << monMagicien.getManaCost("Siphon") << std::endl;
+						std::cout << "5. Fire Bolt			 | Degats : " << monMagicien.getDamage("FireBolt") << "			| MP : " << monMagicien.getManaCost("FireBolt") << std::endl;
+						std::cout << "6. Siphon			 | Degats : " << monMagicien.getDamage("Siphon") << "			| MP : " << monMagicien.getManaCost("Siphon") << std::endl;
 						std::cout << "Votre choix : ";
 
 						// Menu d'attaque du Magicien contre le Boss
@@ -311,9 +331,13 @@ void mainMagicien() {
 						}
 						else if (choix == 4) {
 							system("cls");
-							monMagicien.FireBolt(boss);
+							monMagicien.potionMana();
 						}
 						else if (choix == 5) {
+							system("cls");
+							monMagicien.FireBolt(boss);
+						}
+						else if (choix == 6) {
 							system("cls");
 							monMagicien.Siphon(boss);
 						}
@@ -377,11 +401,13 @@ void mainVoleur() {
 			std::cout << "Que voulez-vous faire ?" << std::endl;
 			std::cout << "1. Attaquer			 | Degats : " << monVoleur.getATK() << std::endl;
 			std::cout << "2. Se mettre en position defense | Degats recus /2" << std::endl;
-			std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monVoleur.getQuantitéPotions() << std::endl;
+			std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monVoleur.getQuantitePotionsHP() << std::endl;
+			std::cout << "4. Utiliser Potion de MP	 | MP + 50			| Quantité : " << monMagicien.getQuantitePotionsMana() << std::endl;
+
 			std::cout << "--------------------- " << "\n";
 			std::cout << "Compétences : " << "\n";
-			std::cout << "4. Coup Vampirique	 	 | Degats : " << monVoleur.getDamage("CoupVampirique") << "			| MP : " << monVoleur.getManaCost("CoupVampirique") << std::endl;
-			std::cout << "5. Lame Empoisonnée		 | Degats : " << monVoleur.getDamage("LameEmpoisonnée") << "			| MP : " << monVoleur.getManaCost("LameEmpoisonnée") << std::endl;
+			std::cout << "5. Coup Vampirique	 	 | Degats : " << monVoleur.getDamage("CoupVampirique") << "			| MP : " << monVoleur.getManaCost("CoupVampirique") << std::endl;
+			std::cout << "6. Lame Empoisonnée		 | Degats : " << monVoleur.getDamage("LameEmpoisonnée") << "			| MP : " << monVoleur.getManaCost("LameEmpoisonnée") << std::endl;
 			std::cout << "Votre choix : ";
 
 			//Menu d'attaque pour le Voleur envers le gobelin
@@ -402,9 +428,13 @@ void mainVoleur() {
 			}
 			else if (choix == 4) {
 				system("cls");
-				monVoleur.CoupVampirique(ennemi);
+				monVoleur.potionMana();
 			}
 			else if (choix == 5) {
+				system("cls");
+				monVoleur.CoupVampirique(ennemi);
+			}
+			else if (choix == 6) {
 				system("cls");
 				monVoleur.LameEmpoisonnée(ennemi);
 			}
@@ -438,11 +468,13 @@ void mainVoleur() {
 						std::cout << "Que voulez-vous faire ?" << std::endl;
 						std::cout << "1. Attaquer			 | Degats : " << monVoleur.getATK() << std::endl;
 						std::cout << "2. Se mettre en position defense | Degats recus /2" << std::endl;
-						std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monVoleur.getQuantitéPotions() << std::endl;
+						std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monVoleur.getQuantitePotionsHP() << std::endl;
+						std::cout << "4. Utiliser Potion de MP	 | MP + 50			| Quantité : " << monMagicien.getQuantitePotionsMana() << std::endl;
+
 						std::cout << "--------------------- " << "\n";
 						std::cout << "Compétences : " << "\n";
-						std::cout << "4. Coup Vampirique		 | Degats : " << monVoleur.getDamage("CoupVampirique") << "			| MP : " << monVoleur.getManaCost("CoupVampirique") << std::endl;
-						std::cout << "5. Lame Empoisonnée		 | Degats : " << monVoleur.getDamage("LameEmpoisonnée") << "			| MP : " << monVoleur.getManaCost("LameEmpoisonnée") << std::endl;
+						std::cout << "5. Coup Vampirique		 | Degats : " << monVoleur.getDamage("CoupVampirique") << "			| MP : " << monVoleur.getManaCost("CoupVampirique") << std::endl;
+						std::cout << "6. Lame Empoisonnée		 | Degats : " << monVoleur.getDamage("LameEmpoisonnée") << "			| MP : " << monVoleur.getManaCost("LameEmpoisonnée") << std::endl;
 						std::cout << "Votre choix : ";
 
 						// Menu d'attaque du Voleur contre le Boss
@@ -463,9 +495,13 @@ void mainVoleur() {
 						}
 						else if (choix == 4) {
 							system("cls");
-							monVoleur.CoupVampirique(boss);
+							monVoleur.potionMana();
 						}
 						else if (choix == 5) {
+							system("cls");
+							monVoleur.CoupVampirique(boss);
+						}
+						else if (choix == 6) {
 							system("cls");
 							monVoleur.LameEmpoisonnée(boss);
 						}
@@ -529,11 +565,13 @@ void mainCleric() {
 			std::cout << "Que voulez-vous faire ?" << std::endl;
 			std::cout << "1. Attaquer			 | Degats : " << monCleric.getATK() << std::endl;
 			std::cout << "2. Se mettre en position defense | Degats recus /2" << std::endl;
-			std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monCleric.getQuantitéPotions() << std::endl;
+			std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monCleric.getQuantitePotionsHP() << std::endl;
+			std::cout << "4. Utiliser Potion de MP	 | MP + 50			| Quantité : " << monMagicien.getQuantitePotionsMana() << std::endl;
+
 			std::cout << "--------------------- " << "\n";
 			std::cout << "Compétences : " << "\n";
-			std::cout << "4. Heal				 | Heal : " << monCleric.getDamage("Heal") << "			| MP : " << monCleric.getManaCost("Heal") << std::endl;
-			std::cout << "5. Lumière Divine		 | Degats : " << monCleric.getDamage("LumièreDivine") << "			| MP : " << monCleric.getManaCost("LumièreDivine") << std::endl;
+			std::cout << "5. Heal				 | Heal : " << monCleric.getDamage("Heal") << "			| MP : " << monCleric.getManaCost("Heal") << std::endl;
+			std::cout << "6. Lumière Divine		 | Degats : " << monCleric.getDamage("LumièreDivine") << "			| MP : " << monCleric.getManaCost("LumièreDivine") << std::endl;
 			std::cout << "Votre choix : ";
 
 			//Menu d'attaque pour le Cleric envers le gobelin
@@ -554,9 +592,14 @@ void mainCleric() {
 			}
 			else if (choix == 4) {
 				system("cls");
-				monCleric.Heal(ennemi);
+				monCleric.potionMana();
 			}
 			else if (choix == 5) {
+				system("cls");
+				monCleric.Heal(ennemi);
+			}
+
+			else if (choix == 6) {
 				system("cls");
 				monCleric.LumièreDivine(ennemi);
 			}
@@ -590,11 +633,13 @@ void mainCleric() {
 						std::cout << "Que voulez-vous faire ?" << std::endl;
 						std::cout << "1. Attaquer			 | Degats : " << monCleric.getATK() << std::endl;
 						std::cout << "2. Se mettre en position defense | Degats recus /2" << std::endl;
-						std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monCleric.getQuantitéPotions() << std::endl;
+						std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monCleric.getQuantitePotionsHP() << std::endl;
+						std::cout << "4. Utiliser Potion de MP	 | MP + 50			| Quantité : " << monMagicien.getQuantitePotionsMana() << std::endl;
+
 						std::cout << "--------------------- " << "\n";
 						std::cout << "Compétences : " << "\n";
-						std::cout << "4. Heal				 | Heal : " << monCleric.getDamage("Heal") << "			| MP : " << monCleric.getManaCost("Heal") << std::endl;
-						std::cout << "5. Lumière Divine		 | Degats : " << monCleric.getDamage("LumièreDivine") << "			| MP : " << monCleric.getManaCost("LumièreDivine") << std::endl;
+						std::cout << "5. Heal				 | Heal : " << monCleric.getDamage("Heal") << "			| MP : " << monCleric.getManaCost("Heal") << std::endl;
+						std::cout << "6. Lumière Divine		 | Degats : " << monCleric.getDamage("LumièreDivine") << "			| MP : " << monCleric.getManaCost("LumièreDivine") << std::endl;
 						std::cout << "Votre choix : ";
 
 						// Menu d'attaque du Cleric contre le Boss
@@ -618,6 +663,10 @@ void mainCleric() {
 							monCleric.Heal(boss);
 						}
 						else if (choix == 5) {
+							system("cls");
+							monCleric.potionMana();
+						}
+						else if (choix == 6) {
 							system("cls");
 							monCleric.LumièreDivine(boss);
 						}

@@ -4,10 +4,12 @@
 #include "personnage.h"
 
 
+
 // Constructeur avec paramètres / classe jouable
 Personnage::Personnage(std::string nom, int niveau, int HP, int HPMax, int ATK, int INT, int DEX, int exp, int expmax, int mana, int manamax)
     : nom(nom), Niveau(niveau), HP(HP), HPMax(HPMax), ATK(ATK), INT(INT), DEX(DEX), EXP(exp), ExpMax(expmax), Mana(mana), ManaMax(manamax) {
     potions.resize(3, "Potion de vie");
+    potions.resize(6, "Potion de Mana");
 };
 
 // Constructeur avec paramètres / classe IA
@@ -117,25 +119,38 @@ void Personnage::Defense() {
 
 //Fonction pour utiliser des potions de HP
 void Personnage::utiliserPotion() {
-
-    //Si potion presente dans le vecteur rend 200 HP et en supprime une sinon pas de potion disponible
-    if (!potions.empty()) {
+    // Si une potion de vie est présente dans le vecteur
+    auto it = std::find(potions.begin(), potions.end(), "Potion de vie");
+    if (it != potions.end()) {
         std::cout << nom << " utilise une potion de vie et récupère 200 points de vie.\n";
-        HP += 200; 
+        HP += 200;
         if (HP > HPMax) {
             HP = HPMax;
         }
-        potions.erase(potions.begin());
+        potions.erase(it); // Supprime la potion de vie utilisée
     }
     else {
-        std::cout << "Aucune potion disponible.\n";
+        std::cout << "Aucune potion de vie disponible.\n";
     }
 }
 
-//Retourne le nombre de potion  dans le vecteur
-size_t Personnage::getQuantitéPotions() const {
-    return potions.size();
+
+void Personnage::potionMana() {
+    // Si une potion de Mana est présente dans le vecteur
+    auto it = std::find(potions.begin(), potions.end(), "Potion de Mana");
+    if (it != potions.end()) {
+        std::cout << nom << " utilise une potion de Mana et récupère 50 points de Mana.\n";
+        Mana += 50; // Vous pouvez ajuster la quantité de mana récupérée selon vos besoins
+        if (Mana > ManaMax) {
+            Mana = ManaMax;
+        }
+        potions.erase(it); // Supprime la potion de Mana utilisée
+    }
+    else {
+        std::cout << "Aucune potion de Mana disponible.\n";
+    }
 }
+
 
 // Fonction pour perdre de la mana
 bool Personnage::utiliseMana(int manacost) {
@@ -151,4 +166,24 @@ bool Personnage::utiliseMana(int manacost) {
 
     std::cout << nom << " perd " << manacost << " points de Mana." << std::endl;
     return true;
+}
+
+size_t Personnage::getQuantitePotionsHP() const {
+    size_t quantiteHP = 0;
+    for (const std::string& potion : potions) {
+        if (potion == "Potion de vie") {
+            quantiteHP++;
+        }
+    }
+    return quantiteHP;
+}
+
+size_t Personnage::getQuantitePotionsMana() const {
+    size_t quantiteMana = 0;
+    for (const std::string& potion : potions) {
+        if (potion == "Potion de Mana") {
+            quantiteMana++;
+        }
+    }
+    return quantiteMana;
 }

@@ -39,7 +39,9 @@ public:
     void gagnerEXP(int exp);
     void levelUP();
     void utiliserPotion();
-    size_t getQuantitéPotions() const;
+    void potionMana();
+    size_t getQuantitePotionsHP() const;
+    size_t getQuantitePotionsMana() const;
     bool utiliseMana(int manacost);
 
 
