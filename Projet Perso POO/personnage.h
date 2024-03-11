@@ -6,6 +6,9 @@
 struct Item {
     std::string nom;
     int quantite;
+
+    inline std::string getNom() { return nom;}
+    inline int getQuantite() { return quantite; }
 };
 
 class Personnage
@@ -23,34 +26,38 @@ private:
     int EXP;
     int ExpMax;
     bool EnDefense;
-    std::vector<std::string> potion;
+    int Or;
     std::vector<Item> inventaire;
    
     
 
 public:
+
     Personnage();
     Personnage(std::string nom, int hp, int atk);
     Personnage(std::string nom, int niveau, int HP, int HPMax, int ATK, int INT, int DEX, int exp, int expmax, int mana, int manamax);
     ~Personnage();
 
     bool EstVivant();
-    void addItem(const Item& objet);
+    
     void attaque(Personnage& cible);
     void ExpulsionDuTerritoire(Personnage& cible);
-    void recevoirDegats(int degats);
     void Defense();
+    void recevoirDegats(int degats);
     void recevoirMP(int mana);
     void recevoirSoins(int soins);
     void gagnerEXP(int exp);
     void levelUP();
     void utiliserPotion();
     void potionMana();
+    bool utiliseMana(int manacost);
+    void addItem(const Item& objet, int montantArgent);
+    void acheter(const Item& objet);
+    void afficherInventaire() const;
+
+    
     size_t getQuantitePotionsHP() const;
     size_t getQuantitePotionsMana() const;
-    bool utiliseMana(int manacost);
-    void looterObjet(const Item& objet);
-
     inline std::string getNom() { return nom; };
     inline int getNiveau() { return Niveau; };
 
@@ -66,5 +73,6 @@ public:
     inline int getEXP() { return EXP; };
     inline int getExpMax() { return ExpMax; };
 
+    inline int getArgent() { return Or; }
 };
 

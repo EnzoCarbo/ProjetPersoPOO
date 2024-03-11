@@ -131,6 +131,7 @@
     <ClCompile Include="guerrier.cpp" />
     <ClCompile Include="magicien.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="marchand.cpp" />
     <ClCompile Include="personnage.cpp" />
     <ClCompile Include="voleur.cpp" />
   </ItemGroup>
@@ -138,6 +139,7 @@
     <ClInclude Include="cleric.h" />
     <ClInclude Include="guerrier.h" />
     <ClInclude Include="magicien.h" />
+    <ClInclude Include="marchand.h" />
     <ClInclude Include="personnage.h" />
     <ClInclude Include="voleur.h" />
   </ItemGroup>

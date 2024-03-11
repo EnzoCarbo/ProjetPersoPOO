@@ -15,12 +15,12 @@ void Magicien::FireBolt(Personnage& ennemi) {
 }
 
 void Magicien::Siphon(Personnage& ennemi) {
-    if (!utiliseMana(30)) {    
+    if (!utiliseMana(40)) {    
          return;
     }
 
     //Dégats fois 3 basé sur la INT
-    int degats = this->getINT() * 3;
+    int degats = this->getINT() * 2;
     std::cout << this->getNom() << " utilise Siphon sur " << ennemi.getNom() << " et inflige " << degats << " dégâts !" << std::endl;
     ennemi.recevoirDegats(degats);
  
@@ -47,7 +47,7 @@ int Magicien::getManaCost(std::string spellName) {
         return 50;
     }
     else if (spellName == "Siphon") {
-        return 30;
+        return 40;
     }
     else if (spellName == "ThunderBolt") {
         return 70;
@@ -64,7 +64,7 @@ int Magicien::getDamage(std::string spellName) {
         return this->getINT() * 5;
     }
     else if (spellName == "Siphon") {
-        return this->getINT() * 3;
+        return this->getINT() * 2;
     }
     else if (spellName == "ThunderBolt") {
         return this->getINT() * 7;

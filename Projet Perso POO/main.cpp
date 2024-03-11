@@ -14,7 +14,10 @@
 //Equilibrage
 //Sort du Guerrier
 //Merge inventaire + potion
-
+//Sytème de marchand
+//Systeme craft
+//Système Equipement 
+//Ne pas perdre un tour quand je sors de l'inventaire
 
 
 Guerrier monGuerrier("Guerrier", 1, 1200, 1200, 20, 1, 8, 0, 100, 20, 20);
@@ -27,7 +30,8 @@ void HUD(Personnage& personnage, Personnage& ennemie) {
 	std::cout << personnage.getNom() << "			 | HP : " << personnage.getHP() << " / " << personnage.getHPMax() << "			| Mana : " << personnage.getMana() << " / " << personnage.getManaMax() << "\n";
 	std::cout << "Niveau : " << personnage.getNiveau() << std::endl;
 	std::cout << "Exp : " << personnage.getEXP() << " / " << personnage.getExpMax() << "\n";
-	std::cout << "\n";
+	std::cout << "Or :" << personnage.getArgent() << std::endl;
+ 	std::cout << "\n";
 	std::cout << ennemie.getNom() << "			 | HP : " << ennemie.getHP() << "\n";
 	std::cout << "--------------------- " << "\n";
 	std::cout << "Que voulez-vous faire ?" << std::endl;
@@ -59,6 +63,24 @@ void HUD(Personnage& personnage, Personnage& ennemie) {
 	std::cout << "Votre choix : " << std::endl;
 }
 
+void menuInventaire(Personnage& personnage) {
+	personnage.afficherInventaire();
+	std::cout << "Veuillez choisir une action :\n";
+	std::cout << "1. Utiliser une potion de HP\n";
+	std::cout << "2. Utiliser une potion de mana\n";
+	int choixPotion;
+	std::cin >> choixPotion;
+	if (choixPotion == 1) {
+		personnage.utiliserPotion();
+	}
+	else if (choixPotion == 2) {
+		personnage.potionMana();
+	}
+	else {
+		std::cout << "Choix invalide.\n";
+	}
+}
+
 void menuCombat(Personnage& personnage, Personnage& ennemi) {
 	bool choixValideBoss = false;
 	int choixBoss;
@@ -87,7 +109,7 @@ void menuCombat(Personnage& personnage, Personnage& ennemi) {
 			monGuerrier.Defense();
 			break;
 		case 3:
-			monGuerrier.utiliserPotion();
+			menuInventaire(personnage);
 			break;
 		case 4:
 			monGuerrier.potionMana();
@@ -112,7 +134,7 @@ void menuCombat(Personnage& personnage, Personnage& ennemi) {
 			monMagicien.Defense();
 			break;
 		case 3:
-			monMagicien.utiliserPotion();
+			menuInventaire(personnage);
 			break;
 		case 4:
 			monMagicien.potionMana();
@@ -139,7 +161,7 @@ void menuCombat(Personnage& personnage, Personnage& ennemi) {
 			monVoleur.Defense();
 			break;
 		case 3:
-			monVoleur.utiliserPotion();
+			menuInventaire(personnage);
 			break;
 		case 4:
 			monVoleur.potionMana();
@@ -163,7 +185,7 @@ void menuCombat(Personnage& personnage, Personnage& ennemi) {
 			monCleric.Defense();
 			break;
 		case 3:
-			monCleric.utiliserPotion();
+			menuInventaire(personnage);
 			break;
 		case 4:
 			monCleric.potionMana();
@@ -185,7 +207,10 @@ void combat(Personnage& personnage) {
 
 	srand(time(nullptr));
 	//Initialise un Magicien avec un constructeur
-
+	
+	std::vector<Item> listLootChauveSouris = { {"Aile", 1},{"Dent", 2},{"Peau", 1} };
+	std::vector<Item> listLootGobelin = { {"Dague", 1},{"Bourse d'or", 2},{"Anneau", 1} };
+	std::vector<Item> listLootTroll = { {"Massue", 1},{"Casque", 2},{"Bottes", 1} };
 	std::vector<Item> listLootBoss = { {"Nez", 1},{"Oreille", 2},{"Peau", 1} };
 	//Variable pour faire des combats à la chaine et nommer les ennemies
 	int ennemisBattus = 0;
@@ -238,6 +263,23 @@ void combat(Personnage& personnage) {
 			if (!ennemi.EstVivant()) {
 				personnage.gagnerEXP(50 + i * (10 * i));
 				ennemisBattus++;
+				Item objetLoot;
+				switch (typeEnnemi) {
+				case 0:
+					objetLoot = listLootChauveSouris[rand() % listLootChauveSouris.size()];
+					break;
+				case 1:
+					objetLoot = listLootGobelin[rand() % listLootGobelin.size()];
+					break;
+				case 2:
+					objetLoot = listLootTroll[rand() % listLootTroll.size()];
+					break;
+				}
+
+				int goldMob = rand() % 4 + 3;
+
+				// Ajouter cet objet à l'inventaire du personnage
+				personnage.addItem(objetLoot, goldMob);
 				if (ennemisBattus % 5 == 0) {
 
 					// Initialise le Boss
@@ -254,6 +296,7 @@ void combat(Personnage& personnage) {
 						// Menu d'attaque du Magicien contre le Boss
 						menuCombat(personnage, boss);
 
+						int goldBoss = rand() % 4 + 10;
 						// Mort du Boss donne de l'expérience et augmente le compteur de 1
 						if (!boss.EstVivant()) {
 							// Donner de l'expérience
@@ -262,7 +305,7 @@ void combat(Personnage& personnage) {
 							int indexObjetLoot = rand() % listLootBoss.size();
 							const Item& objetLootBoss = listLootBoss[indexObjetLoot];
 							// Ajouter cet objet à l'inventaire du personnage
-							personnage.looterObjet(objetLootBoss);
+							personnage.addItem(objetLootBoss, goldBoss);
 							bossBattu++;
 							break;
 						}
@@ -313,6 +356,7 @@ bool Rejouer() {
 
 //Fonction main
 int main() {
+
 	bool jouer = true;
 
 	//Si le joeur veux rejouer, display le menu de choix de classe
