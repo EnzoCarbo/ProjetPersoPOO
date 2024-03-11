@@ -29,6 +29,18 @@ void Magicien::Siphon(Personnage& ennemi) {
     this->recevoirMP(mana_recupere);
 }
 
+void Magicien::ThunderBolt(Personnage& ennemi) {
+
+    if (!utiliseMana(70)) {
+        return;
+    }
+
+    //Dégats fois 5 basé sur la INT
+    int degats = this->getINT() * 7;
+    std::cout << this->getNom() << " utilise FireBolt sur " << ennemi.getNom() << " et inflige " << degats << " dégâts !" << std::endl;
+    ennemi.recevoirDegats(degats);
+}
+
 int Magicien::getManaCost(std::string spellName) {
     // Retourne le coût en mana en fonction du nom du sort
     if (spellName == "FireBolt") {
@@ -63,15 +75,4 @@ int Magicien::getDamage(std::string spellName) {
     }
 }
 
-void Magicien::ThunderBolt(Personnage& ennemi) {
-
-    if (!utiliseMana(70)) {
-        return;
-    }
-
-    //Dégats fois 5 basé sur la INT
-    int degats = this->getINT() * 7;
-    std::cout << this->getNom() << " utilise FireBolt sur " << ennemi.getNom() << " et inflige " << degats << " dégâts !" << std::endl;
-    ennemi.recevoirDegats(degats);
-}
 

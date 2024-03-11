@@ -3,6 +3,11 @@
 #include <string>
 #include <vector>
 
+struct Item {
+    std::string nom;
+    int quantite;
+};
+
 class Personnage
 {
 private:
@@ -18,7 +23,8 @@ private:
     int EXP;
     int ExpMax;
     bool EnDefense;
-    std::vector<std::string> potions;
+    std::vector<std::string> potion;
+    std::vector<Item> inventaire;
    
     
 
@@ -29,7 +35,7 @@ public:
     ~Personnage();
 
     bool EstVivant();
-
+    void addItem(const Item& objet);
     void attaque(Personnage& cible);
     void ExpulsionDuTerritoire(Personnage& cible);
     void recevoirDegats(int degats);
@@ -43,7 +49,7 @@ public:
     size_t getQuantitePotionsHP() const;
     size_t getQuantitePotionsMana() const;
     bool utiliseMana(int manacost);
-
+    void looterObjet(const Item& objet);
 
     inline std::string getNom() { return nom; };
     inline int getNiveau() { return Niveau; };

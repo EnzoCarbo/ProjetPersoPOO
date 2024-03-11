@@ -1,6 +1,7 @@
 #include<iostream>
 #include <cstdlib>
 #include <iomanip>
+#include<ctime>
 #include"guerrier.h"
 #include"magicien.h"
 #include"voleur.h"
@@ -9,236 +10,183 @@
 
 
 //TO DO
-//Eviter redondance (func combat)
+//Redondance code, combat / menu
 //Equilibrage
 //Sort du Guerrier
-//Potion ne peut pas use si max
-//Systeme de loot ? 
-//Porter l'hud M à GVC
-
-//Faire en sorte de pas perdre un tour quand utilise un input faux dans les menu combat
+//Merge inventaire + potion
 
 
 
-Magicien monMagicien("Magicien", 1, 700, 700, 5, 20, 4, 0, 100, 100, 100);
-Voleur monVoleur("Voleur", 1, 1000, 1000, 6, 15, 12, 0, 100, 80, 80);
-Cleric monCleric("Cleric", 1, 1000, 1000, 6, 15, 12, 0, 100, 80, 80);
+Guerrier monGuerrier("Guerrier", 1, 1200, 1200, 20, 1, 8, 0, 100, 20, 20);
+Magicien monMagicien("Magicien", 1, 7100, 7100, 5, 20, 4, 0, 100, 10000, 10000);
+Voleur monVoleur("Voleur", 1, 1000, 1000, 10, 3, 15, 0, 100, 80, 80);
+Cleric monCleric("Cleric", 1, 1000, 1000, 6, 15, 10, 0, 100, 80, 80);
 
-//Focntion Rejouer
-bool Rejouer() {
-	int choix;
 
-	
-	std::cout << "Voulez-vous rejouer ? (1 pour oui, 0 pour non) : ";
-	std::cin >> choix;
-
-	//Si choisi autre que 0 et 1 renvoi la fonction rejouer et redemande
-	if (choix != 0 && choix != 1) {
-		std::cout << "Choix invalide. Veuillez saisir 1 pour oui ou 0 pour non." << std::endl;
-		return Rejouer(); 
+void HUD(Personnage& personnage, Personnage& ennemie) {
+	std::cout << personnage.getNom() << "			 | HP : " << personnage.getHP() << " / " << personnage.getHPMax() << "			| Mana : " << personnage.getMana() << " / " << personnage.getManaMax() << "\n";
+	std::cout << "Niveau : " << personnage.getNiveau() << std::endl;
+	std::cout << "Exp : " << personnage.getEXP() << " / " << personnage.getExpMax() << "\n";
+	std::cout << "\n";
+	std::cout << ennemie.getNom() << "			 | HP : " << ennemie.getHP() << "\n";
+	std::cout << "--------------------- " << "\n";
+	std::cout << "Que voulez-vous faire ?" << std::endl;
+	std::cout << "1. Attaquer			 | Degats : " << personnage.getATK() << std::endl;
+	std::cout << "2. Se mettre en position defense | Degats recus /2" << std::endl;
+	std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << personnage.getQuantitePotionsHP() << std::endl;
+	std::cout << "4. Utiliser Potion de MP	 | MP + 50			| Quantité : " << personnage.getQuantitePotionsMana() << std::endl;
+	std::cout << "--------------------- " << "\n";
+	std::cout << "Compétences : " << "\n";
+	if (personnage.getNom() == "Guerrier") {
+		std::cout << "5. Coup Tranchant	 	 | Degats : " << monGuerrier.getDamage("CoupTranchant") << "			| MP : " << monGuerrier.getManaCost("CoupTranchant") << std::endl;
+		std::cout << "6. Coup De Bouclier	 	 | Degats : " << monGuerrier.getDamage("CoupDeBouclier") << "			| MP : " << monGuerrier.getManaCost("CoupDeBouclier") << std::endl;
 	}
-
-	//Choisi 1 renvoie true
-	return (choix == 1);
+	if (personnage.getNom() == "Magicien") {
+		std::cout << "5. Fire Bolt			 | Degats : " << monMagicien.getDamage("FireBolt") << "			| MP : " << monMagicien.getManaCost("FireBolt") << std::endl;
+		std::cout << "6. Siphon			 | Degats : " << monMagicien.getDamage("Siphon") << "			| MP : " << monMagicien.getManaCost("Siphon") << std::endl;
+		if (personnage.getNiveau() >= 4) {
+			std::cout << "7. ThunderBolt			 | Degats : " << monMagicien.getDamage("ThunderBolt") << "			| MP : " << monMagicien.getManaCost("ThunderBolt") << std::endl;
+		}
+	}
+	if (personnage.getNom() == "Voleur") {
+		std::cout << "5. Coup Vampirique		 | Degats : " << monVoleur.getDamage("CoupVampirique") << "			| MP : " << monVoleur.getManaCost("CoupVampirique") << std::endl;
+		std::cout << "6. Lame Empoisonnée		 | Degats : " << monVoleur.getDamage("LameEmpoisonnée") << "			| MP : " << monVoleur.getManaCost("LameEmpoisonnée") << std::endl;
+	}
+	if (personnage.getNom() == "Cleric") {
+		std::cout << "5. Heal				 | Heal : " << monCleric.getDamage("Heal") << "			| MP : " << monCleric.getManaCost("Heal") << std::endl;
+		std::cout << "6. Lumière Divine		 | Degats : " << monCleric.getDamage("LumièreDivine") << "			| MP : " << monCleric.getManaCost("LumièreDivine") << std::endl;
+	}
+	std::cout << "Votre choix : " << std::endl;
 }
 
-// Combat avec une personnage Guerrier
-void mainGuerrier() {
-
-	//Initialise un Guerrier avec un constructeur
-	Guerrier monGuerrier("Guerrier", 1, 1, 1200, 20, 1, 8, 0, 100, 20, 20);
-
-	//Variable pour faire des combats à la chaine et nommer les ennemies
-	int ennemisBattus = 0;
-	int bossBattu = 0;
-
-	//Boucle de combat avec 25 combats
-	for (int i = 1; i <= 25; i++) {
-
-		//Le nom de l'ennemi augmente de 1 avec i++
-		std::string nomGobelin = "Gobelin " + std::to_string(i);
-
-		//Initialise un ennemi avec un Constructeur (nom, hp, atk)
-		Personnage ennemi(nomGobelin, 50 + i * 20, 20 + i * 5);
-		std::cout << "--------------------- " << "\n";
-		std::cout << "Combat entre " << monGuerrier.getNom() << " et " << ennemi.getNom() << " !\n";
-
-		//Boucle de combat tant que mon perso ou l'aderversaire est en vie
-		while (monGuerrier.EstVivant() && ennemi.EstVivant()) {
-			std::cout << monGuerrier.getNom() << "			 | HP : " << monGuerrier.getHP() << "			| Mana : " << monGuerrier.getMana() << "\n";
-			std::cout << "Exp : " << monGuerrier.getEXP() << " / " << monGuerrier.getExpMax() << "\n";
-			std::cout << "\n";
-			std::cout << ennemi.getNom() << "			 | HP : " << ennemi.getHP() << "\n";
-			std::cout << "--------------------- " << "\n";
-			std::cout << "Que voulez-vous faire ?" << std::endl;
-			std::cout << "1. Attaquer			 | Degats : " << monGuerrier.getATK() << std::endl;
-			std::cout << "2. Se mettre en position defense | Degats recus /2" << std::endl;
-			std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monGuerrier.getQuantitePotionsHP() << std::endl;
-			std::cout << "4. Utiliser Potion de MP	 | MP + 50			| Quantité : " << monMagicien.getQuantitePotionsMana() << std::endl;
-
-			std::cout << "--------------------- " << "\n";
-			std::cout << "Compétences : " << "\n";
-			std::cout << "5. Coup Tranchant	 	 | Degats : " << monGuerrier.getDamage("CoupTranchant") << "			| MP : " << monGuerrier.getManaCost("CoupTranchant") << std::endl;
-			std::cout << "6. Coup De Bouclier	 	 | Degats : " << monGuerrier.getDamage("CoupDeBouclier") << "			| MP : " << monGuerrier.getManaCost("CoupDeBouclier") << std::endl;
-			std::cout << "Votre choix : ";
-
-			//Menu d'attaque pour le guerrier envers le gobelin
-			int choix;
-			bool choixValide = false;
-			do {
-				std::cin >> choix;
-				std::cout << std::endl;
-				if (std::cin.fail() || (choix < 1 || choix > 7) || (choix == 7 && monMagicien.getNiveau() < 4)) {
-					std::cin.clear(); // Efface l'état d'erreur du flux
-					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore les caractères restants dans le flux
-					std::cout << "Choix invalide. Veuillez saisir un choix valide.\n";
-				}
-				else {
-					choixValide = true;
-				}
-			} while (!choixValide);
-
-			// Effacer l'écran après avoir fait un choix valide
-			system("cls");
-
-			// Exécuter l'action en fonction du choix
-			switch (choix) {
-			case 1:
-				monMagicien.attaque(ennemi);
-				break;
-			case 2:
-				monMagicien.Defense();
-				break;
-			case 3:
-				monMagicien.utiliserPotion();
-				break;
-			case 4:
-				monMagicien.potionMana();
-				break;
-			case 5:
-				monMagicien.FireBolt(ennemi);
-				break;
-			case 6:
-				monMagicien.Siphon(ennemi);
-				break;
-			case 7:
-				monMagicien.ThunderBolt(ennemi);
-				break;
-			default:
-				break;
-			}
-			//Le gobelin attaque
-			ennemi.attaque(monGuerrier);
-			std::cout << "--------------------- " << "\n";
-			
-			//Si le gobelin meurt donne de l'experience et augmente la difficultée
-			if (!ennemi.EstVivant()) {
-				monGuerrier.gagnerEXP(50 + i * (10 * i));
-				ennemisBattus++;
-				if (ennemisBattus % 5 == 0) {
-
-					// Initialise le Boss
-					std::string nomBoss = "Boss " + std::to_string(bossBattu + 1);
-					Personnage boss(nomBoss, 500, 200);
-					std::cout << "--------------------- " << "\n";
-					std::cout << "Combat entre " << monGuerrier.getNom() << " et " << boss.getNom() << " !\n";
-
-					// Tant que le personnage ou le boss est en vie, le combat continue
-					while (monGuerrier.EstVivant() && boss.EstVivant()) {
-						std::cout << monGuerrier.getNom() << "			 | HP : " << monGuerrier.getHP() << "			| Mana : " << monGuerrier.getMana() << "\n";
-						std::cout << "Exp : " << monGuerrier.getEXP() << " / " << monGuerrier.getExpMax() << "\n";
-						std::cout << "\n";
-						std::cout << boss.getNom() << "				 | HP : " << boss.getHP() << "\n";
-						std::cout << "--------------------- " << "\n";
-						std::cout << "Que voulez-vous faire ?" << std::endl;
-						std::cout << "1. Attaquer			 | Degats : " << monGuerrier.getATK() << std::endl;
-						std::cout << "2. Se mettre en position defense | Degats recus /2" << std::endl;
-						std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monGuerrier.getQuantitePotionsHP() << std::endl;
-						std::cout << "4. Utiliser Potion de MP	 | MP + 50			| Quantité : " << monMagicien.getQuantitePotionsMana() << std::endl;
-
-						std::cout << "--------------------- " << "\n";
-						std::cout << "Compétences : " << "\n";
-						std::cout << "5. Coup Tranchant		  | Degats : " << monGuerrier.getDamage("CoupTranchant") << "			| MP : " << monGuerrier.getManaCost("CoupTranchant") << std::endl;
-						std::cout << "6. Coup De Bouclier		  | Degats : " << monGuerrier.getDamage("CoupDeBouclier") << "			| MP : " << monGuerrier.getManaCost("CoupDeBouclier") << std::endl;
-						std::cout << "Votre choix : ";
-
-						// Menu d'attaque du Guerrier contre le Boss
-						bool choixValideBoss = false;
-						int choixBoss;
-						do {
-							std::cin >> choixBoss;
-							std::cout << std::endl;
-							if (std::cin.fail() || (choixBoss < 1 || choixBoss > 7) || (choixBoss == 7 && monMagicien.getNiveau() < 4)) {
-								std::cin.clear(); // Efface l'état d'erreur du flux
-								std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore les caractères restants dans le flux
-								std::cout << "Choix invalide. Veuillez saisir un choix valide.\n";
-							}
-							else {
-								choixValideBoss = true;
-							}
-						} while (!choixValideBoss);
-
-						// Effacer l'écran après avoir fait un choix valide
-						system("cls");
-
-						// Exécuter l'action en fonction du choix
-						switch (choixBoss) {
-						case 1:
-							monMagicien.attaque(boss);
-							break;
-						case 2:
-							monMagicien.Defense();
-							break;
-						case 3:
-							monMagicien.utiliserPotion();
-							break;
-						case 4:
-							monMagicien.potionMana();
-							break;
-						case 5:
-							monMagicien.FireBolt(boss);
-							break;
-						case 6:
-							monMagicien.Siphon(boss);
-							break;
-						case 7:
-							monMagicien.ThunderBolt(boss);
-							break;
-						default:
-							// Cet endroit ne devrait pas être atteint car la validation garantit que le choix est dans les limites.
-							break;
-						}
-
-
-						// Mort du Boss donne de l'expérience et augmente le compteur de 1
-						if (!boss.EstVivant()) {
-							monGuerrier.gagnerEXP(150 + i * (10 * i));
-							std::cout << "Le " << boss.getNom() << " est Mort !\n";
-							bossBattu++;
-							break;
-						}
-
-						// Attaque du Boss
-						boss.attaque(monGuerrier);
-						std::cout << "--------------------- " << "\n";
-					}
-				}
-			}	
+void menuCombat(Personnage& personnage, Personnage& ennemi) {
+	bool choixValideBoss = false;
+	int choixBoss;
+	do {
+		std::cin >> choixBoss;
+		std::cout << std::endl;
+		if (std::cin.fail() || (choixBoss < 1 || choixBoss > 7) || (choixBoss == 7 && monMagicien.getNiveau() < 4)) {
+			std::cin.clear(); // Efface l'état d'erreur du flux
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore les caractères restants dans le flux
+			std::cout << "Choix invalide. Veuillez saisir un choix valide.\n";
 		}
-		// Sort de la boucle combat en cas de mort et retourne au menu
-		if (!monGuerrier.EstVivant()) {
-			std::cout << "Vous êtes mort" << std::endl;
+		else {
+			choixValideBoss = true;
+		}
+	} while (!choixValideBoss);
+
+	// Effacer l'écran après avoir fait un choix valide
+	system("cls");
+
+	if (personnage.getNom() == "Guerrier") {
+		switch (choixBoss) {
+		case 1:
+			monGuerrier.attaque(ennemi);
+			break;
+		case 2:
+			monGuerrier.Defense();
+			break;
+		case 3:
+			monGuerrier.utiliserPotion();
+			break;
+		case 4:
+			monGuerrier.potionMana();
+			break;
+		case 5:
+			monGuerrier.CoupTranchant(ennemi);
+			break;
+		case 6:
+			monGuerrier.CoupDeBouclier(ennemi);
+			break;
+		default:
+			break;
+		}
+	}
+	// Exécuter l'action en fonction du choix
+	if (personnage.getNom() == "Magicien") {
+		switch (choixBoss) {
+		case 1:
+			monMagicien.attaque(ennemi);
+			break;
+		case 2:
+			monMagicien.Defense();
+			break;
+		case 3:
+			monMagicien.utiliserPotion();
+			break;
+		case 4:
+			monMagicien.potionMana();
+			break;
+		case 5:
+			monMagicien.FireBolt(ennemi);
+			break;
+		case 6:
+			monMagicien.Siphon(ennemi);
+			break;
+		case 7:
+			monMagicien.ThunderBolt(ennemi);
+			break;
+		default:
+			break;
+		}
+	}
+	if (personnage.getNom() == "Voleur") {
+		switch (choixBoss) {
+		case 1:
+			monVoleur.attaque(ennemi);
+			break;
+		case 2:
+			monVoleur.Defense();
+			break;
+		case 3:
+			monVoleur.utiliserPotion();
+			break;
+		case 4:
+			monVoleur.potionMana();
+			break;
+		case 5:
+			monVoleur.CoupVampirique(ennemi);
+			break;
+		case 6:
+			monVoleur.LameEmpoisonnée(ennemi);
+			break;
+		default:
+			break;
+		}
+	}
+	if (personnage.getNom() == "Cleric") {
+		switch (choixBoss) {
+		case 1:
+			monCleric.attaque(ennemi);
+			break;
+		case 2:
+			monCleric.Defense();
+			break;
+		case 3:
+			monCleric.utiliserPotion();
+			break;
+		case 4:
+			monCleric.potionMana();
+			break;
+		case 5:
+			monCleric.Heal(ennemi);
+			break;
+		case 6:
+			monCleric.LumièreDivine(ennemi);
+			break;
+		default:
 			break;
 		}
 	}
 }
 
-// Combat avec une personnage Magicien
-void mainMagicien() {
 
+void combat(Personnage& personnage) {
+
+	srand(time(nullptr));
 	//Initialise un Magicien avec un constructeur
-	Magicien monMagicien("Magicien", 1, 7100, 7100, 5, 20, 4, 0, 100, 10000, 10000);
 
+	std::vector<Item> listLootBoss = { {"Nez", 1},{"Oreille", 2},{"Peau", 1} };
 	//Variable pour faire des combats à la chaine et nommer les ennemies
 	int ennemisBattus = 0;
 	int bossBattu = 0;
@@ -247,92 +195,48 @@ void mainMagicien() {
 	//Boucle de combat avec 25 combats
 	for (int i = 1; i <= 25; i++) {
 
-		//Le nom de l'ennemi augmente de 1 avec i++
-		std::string nomGobelin = "Gobelin " + std::to_string(i);
+		int typeEnnemi = rand() % 3;
+		std::string nomEnnemi;
+		int atk, hp;
+		switch (typeEnnemi) {
+		case 0: 
+			nomEnnemi = "Chauve-souris " + std::to_string(i);
+			hp = 50 + i * 20;
+			atk = 20 + i * 5;
+			break;
+		case 1: 
+			nomEnnemi = "Gobelin " + std::to_string(i);
+			hp = 100 + i * 30;
+			atk = 30 + i * 10;
+			break;
+		case 2: 
+			nomEnnemi = "Troll " + std::to_string(i);
+			hp = 200 + i * 40;
+			atk = 40 + i * 15;
+			break;
+		}
 
 		//Initialise un ennemi avec un Constructeur (nom, hp, atk)
-		Personnage ennemi(nomGobelin, 50 + i * 20, 20 + i * 5);
+		Personnage ennemi(nomEnnemi, hp, atk);
 		std::cout << "--------------------- " << "\n";
-		std::cout << "Combat entre " << monMagicien.getNom() << " et " << ennemi.getNom() << " !\n";
+		std::cout << "Combat entre " << personnage.getNom() << " et " << ennemi.getNom() << " !\n";
 		std::cout << "--------------------- " << "\n";
+		std::cout << " \n";
+		std::cout << " \n";
 
-		std::cout <<  " \n";
-		std::cout <<  " \n";
-		
 		//Boucle de combat tant que mon perso ou l'aderversaire est en vie
-		while (monMagicien.EstVivant() && ennemi.EstVivant()) {
-			std::cout << monMagicien.getNom() << "			 | HP : " << monMagicien.getHP() << " / " << monMagicien.getHPMax() << "			| Mana : " << monMagicien.getMana() << " / " << monMagicien.getManaMax() << "\n";
-			std::cout << "Niveau : " << monMagicien.getNiveau() << std::endl;
-			std::cout << "Exp : " << monMagicien.getEXP() << " / " << monMagicien.getExpMax() << "\n";
-			std::cout << "\n";
-			std::cout << ennemi.getNom() << "			 | HP : " << ennemi.getHP() << "\n";
-			std::cout << "--------------------- " << "\n";
-			std::cout << "Que voulez-vous faire ?" << std::endl;
-			std::cout << "1. Attaquer			 | Degats : " << monMagicien.getATK() << std::endl;
-			std::cout << "2. Se mettre en position defense | Degats recus /2" << std::endl;
-			std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monMagicien.getQuantitePotionsHP() << std::endl;
-			std::cout << "4. Utiliser Potion de MP	 | MP + 50			| Quantité : " << monMagicien.getQuantitePotionsMana() << std::endl;
-			std::cout << "--------------------- " << "\n";
-			std::cout << "Compétences : " << "\n";
-			std::cout << "5. Fire Bolt			 | Degats : " << monMagicien.getDamage("FireBolt") << "			| MP : " << monMagicien.getManaCost("FireBolt") << std::endl;
-			std::cout << "6. Siphon			 | Degats : " << monMagicien.getDamage("Siphon") << "			| MP : " << monMagicien.getManaCost("Siphon") << std::endl;
-			if (monMagicien.getNiveau() >= 4) {
-			std::cout << "7. ThunderBolt			 | Degats : " << monMagicien.getDamage("ThunderBolt") << "			| MP : " << monMagicien.getManaCost("ThunderBolt") << std::endl;
-			}
-			std::cout << "Votre choix : ";
+		while (personnage.EstVivant() && ennemi.EstVivant()) {
+			HUD(personnage, ennemi);
 
 			//Menu d'attaque pour le Magicien envers le gobelin
-			int choix;
-			bool choixValide = false;
-			do {
-				std::cin >> choix;
-				std::cout << std::endl;
-				if (std::cin.fail() || (choix < 1 || choix > 7) || (choix == 7 && monMagicien.getNiveau() < 4)) {
-					std::cin.clear(); // Efface l'état d'erreur du flux
-					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore les caractères restants dans le flux
-					std::cout << "Choix invalide. Veuillez saisir un choix valide.\n";
-				}
-				else {
-					choixValide = true;
-				}
-			} while (!choixValide);
-
-			// Effacer l'écran après avoir fait un choix valide
-			system("cls");
-
-			// Exécuter l'action en fonction du choix
-			switch (choix) {
-			case 1:
-				monMagicien.attaque(ennemi);
-				break;
-			case 2:
-				monMagicien.Defense();
-				break;
-			case 3:
-				monMagicien.utiliserPotion();
-				break;
-			case 4:
-				monMagicien.potionMana();
-				break;
-			case 5:
-				monMagicien.FireBolt(ennemi);
-				break;
-			case 6:
-				monMagicien.Siphon(ennemi);
-				break;
-			case 7:
-				monMagicien.ThunderBolt(ennemi);
-				break;
-			default:
-				break;
-			}
+			menuCombat(personnage, ennemi);
 			//Le gobelin attaque
-			ennemi.attaque(monMagicien);
+			ennemi.attaque(personnage);
 			std::cout << "--------------------- " << "\n";
 
 			//Si le gobelin meurt donne de l'experience et augmente la difficultée
 			if (!ennemi.EstVivant()) {
-				monMagicien.gagnerEXP(50 + i * (10 * i));
+				personnage.gagnerEXP(50 + i * (10 * i));
 				ennemisBattus++;
 				if (ennemisBattus % 5 == 0) {
 
@@ -340,93 +244,35 @@ void mainMagicien() {
 					std::string nomBoss = "Zemmour " + std::to_string(bossBattu + 1);
 					Personnage boss(nomBoss, 500, 200);
 					std::cout << "--------------------- " << "\n";
-					std::cout << "Combat entre " << monMagicien.getNom() << " et " << boss.getNom() << " !\n";
+					std::cout << "Combat entre " << personnage.getNom() << " et " << boss.getNom() << " !\n";
 
 					// Tant que le personnage ou le boss est en vie, le combat continue
-					while (monMagicien.EstVivant() && boss.EstVivant()) {
-						std::cout << monMagicien.getNom() << "			 | HP : " << monMagicien.getHP() << " / " << monMagicien.getHPMax() << "			| Mana : " << monMagicien.getMana() << " / " << monMagicien.getManaMax() << "\n";
-						std::cout << " Niveau : " << monMagicien.getNiveau() << std::endl;
-						std::cout << "Exp : " << monMagicien.getEXP() << " / " << monMagicien.getExpMax() << "\n";
-						std::cout << "\n";
-						std::cout << boss.getNom() << "				 | HP : " << boss.getHP() << "\n";
-						std::cout << "--------------------- " << "\n";
-						std::cout << "Que voulez-vous faire ?" << std::endl;
-						std::cout << "1. Attaquer			 | Degats : " << monMagicien.getATK() << std::endl;
-						std::cout << "2. Se mettre en position defense | Degats recus /2" << std::endl;
-						std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monMagicien.getQuantitePotionsHP() << std::endl;
-						std::cout << "4. Utiliser Potion de MP	 | MP + 50			| Quantité : " << monMagicien.getQuantitePotionsMana() << std::endl;
-
-						std::cout << "--------------------- " << "\n";
-						std::cout << "Compétences : " << "\n";
-						std::cout << "5. Fire Bolt			 | Degats : " << monMagicien.getDamage("FireBolt") << "			| MP : " << monMagicien.getManaCost("FireBolt") << std::endl;
-						std::cout << "6. Siphon			 | Degats : " << monMagicien.getDamage("Siphon") << "			| MP : " << monMagicien.getManaCost("Siphon") << std::endl;
-						if (monMagicien.getNiveau() >= 4) {
-							std::cout << "7. ThunderBolt			 | Degats : " << monMagicien.getDamage("ThunderBolt") << "			| MP : " << monMagicien.getManaCost("ThunderBolt") << std::endl;
-						}
+					while (personnage.EstVivant() && boss.EstVivant()) {
+						HUD(personnage, boss);
 						std::cout << "Votre choix : ";
 
 						// Menu d'attaque du Magicien contre le Boss
-						bool choixValideBoss = false;
-						int choixBoss;
-						do {
-							std::cin >> choixBoss;
-							std::cout << std::endl;
-							if (std::cin.fail() || (choixBoss < 1 || choixBoss > 7) || (choixBoss == 7 && monMagicien.getNiveau() < 4)) {
-								std::cin.clear(); // Efface l'état d'erreur du flux
-								std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore les caractères restants dans le flux
-								std::cout << "Choix invalide. Veuillez saisir un choix valide.\n";
-							}
-							else {
-								choixValideBoss = true;
-							}
-						} while (!choixValideBoss);
-
-						// Effacer l'écran après avoir fait un choix valide
-						system("cls");
-
-						// Exécuter l'action en fonction du choix
-						switch (choixBoss) {
-						case 1:
-							monMagicien.attaque(boss);
-							break;
-						case 2:
-							monMagicien.Defense();
-							break;
-						case 3:
-							monMagicien.utiliserPotion();
-							break;
-						case 4:
-							monMagicien.potionMana();
-							break;
-						case 5:
-							monMagicien.FireBolt(boss);
-							break;
-						case 6:
-							monMagicien.Siphon(boss);
-							break;
-						case 7:
-							monMagicien.ThunderBolt(boss);
-							break;
-						default:
-							// Cet endroit ne devrait pas être atteint car la validation garantit que le choix est dans les limites.
-							break;
-						}
-
+						menuCombat(personnage, boss);
 
 						// Mort du Boss donne de l'expérience et augmente le compteur de 1
 						if (!boss.EstVivant()) {
-							monMagicien.gagnerEXP(150 + i * (10 * i));
-							std::cout << "Le " << boss.getNom() << " est Mort !\n";
+							// Donner de l'expérience
+							personnage.gagnerEXP(150 + i * (10 * i));
+							// Choisir aléatoirement un objet parmi ceux possibles
+							int indexObjetLoot = rand() % listLootBoss.size();
+							const Item& objetLootBoss = listLootBoss[indexObjetLoot];
+							// Ajouter cet objet à l'inventaire du personnage
+							personnage.looterObjet(objetLootBoss);
 							bossBattu++;
 							break;
 						}
 
 						// Attaque du Boss
-						boss.attaque(monMagicien);
+						boss.attaque(personnage);
 						toursDepuisDernierSpecial++;
 						if (toursDepuisDernierSpecial == 3) {
 							// Appel de la fonction pour le coup spécial du boss
-							boss.ExpulsionDuTerritoire(monMagicien);
+							boss.ExpulsionDuTerritoire(personnage);
 
 							// Réinitialisation du compteur de tours depuis le dernier coup spécial
 							toursDepuisDernierSpecial = 0;
@@ -441,338 +287,29 @@ void mainMagicien() {
 			std::cout << "Vous êtes mort" << std::endl;
 			break;
 		}
-	}
-}
-
-// Combat avec une personnage Voleur
-void mainVoleur() {
-
-	//Initialise un Voleur avec un constructeur
-	Voleur monVoleur("Voleur", 1, 1000, 1000, 6, 15, 12, 0, 100, 80, 80);
-
-	//Variable pour faire des combats à la chaine et nommer les ennemies
-	int ennemisBattus = 0;
-	int bossBattu = 0;
-
-	//Boucle de combat avec 25 combats
-	for (int i = 1; i <= 25; i++) {
-
-		//Le nom de l'ennemi augmente de 1 avec i++
-		std::string nomGobelin = "Gobelin " + std::to_string(i);
-
-		//Initialise un ennemi avec un Constructeur (nom, hp, atk)
-		Personnage ennemi(nomGobelin, 50 + i * 20, 20 + i * 5);
-		std::cout << "--------------------- " << "\n";
-		std::cout << "Combat entre " << monVoleur.getNom() << " et " << ennemi.getNom() << " !\n";
-
-		//Boucle de combat tant que mon perso ou l'aderversaire est en vie
-		while (monVoleur.EstVivant() && ennemi.EstVivant()) {
-			std::cout << monVoleur.getNom() << "				 | HP : " << monVoleur.getHP() << "			| Mana : " << monVoleur.getMana() << "\n";
-			std::cout << "Exp : " << monVoleur.getEXP() << " / " << monVoleur.getExpMax() << "\n";
-			std::cout << "\n";
-			std::cout << ennemi.getNom() << "			 | HP : " << ennemi.getHP() << "\n";
-			std::cout << "--------------------- " << "\n";
-			std::cout << "Que voulez-vous faire ?" << std::endl;
-			std::cout << "1. Attaquer			 | Degats : " << monVoleur.getATK() << std::endl;
-			std::cout << "2. Se mettre en position defense | Degats recus /2" << std::endl;
-			std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monVoleur.getQuantitePotionsHP() << std::endl;
-			std::cout << "4. Utiliser Potion de MP	 | MP + 50			| Quantité : " << monMagicien.getQuantitePotionsMana() << std::endl;
-
-			std::cout << "--------------------- " << "\n";
-			std::cout << "Compétences : " << "\n";
-			std::cout << "5. Coup Vampirique	 	 | Degats : " << monVoleur.getDamage("CoupVampirique") << "			| MP : " << monVoleur.getManaCost("CoupVampirique") << std::endl;
-			std::cout << "6. Lame Empoisonnée		 | Degats : " << monVoleur.getDamage("LameEmpoisonnée") << "			| MP : " << monVoleur.getManaCost("LameEmpoisonnée") << std::endl;
-			std::cout << "Votre choix : ";
-
-			//Menu d'attaque pour le Voleur envers le gobelin
-			int choix;
-			std::cin >> choix;
-			std::cout << std::endl;
-			if (choix == 1) {
-				system("cls");
-				monVoleur.attaque(ennemi);
-			}
-			else if (choix == 2) {
-				system("cls");
-				monVoleur.Defense();
-			}
-			else if (choix == 3) {
-				system("cls");
-				monVoleur.utiliserPotion();
-			}
-			else if (choix == 4) {
-				system("cls");
-				monVoleur.potionMana();
-			}
-			else if (choix == 5) {
-				system("cls");
-				monVoleur.CoupVampirique(ennemi);
-			}
-			else if (choix == 6) {
-				system("cls");
-				monVoleur.LameEmpoisonnée(ennemi);
-			}
-			else {
-				std::cout << "Choix invalide. Veuillez saisir 1 pour attaquer, 2 pour se défendre, 3 pour utiliser une potion, ou 4 pour la compétence spéciale.\n";
-				continue;
-			}
-			//Le gobelin attaque
-			ennemi.attaque(monVoleur);
-			std::cout << "--------------------- " << "\n";
-
-			//Si le gobelin meurt donne de l'experience et augmente la difficultée
-			if (!ennemi.EstVivant()) {
-				monVoleur.gagnerEXP(50 + i * (10 * i));
-				ennemisBattus++;
-				if (ennemisBattus % 5 == 0) {
-
-					// Initialise le Boss
-					std::string nomBoss = "Boss " + std::to_string(bossBattu + 1);
-					Personnage boss(nomBoss, 500, 200);
-					std::cout << "--------------------- " << "\n";
-					std::cout << "Combat entre " << monVoleur.getNom() << " et " << boss.getNom() << " !\n";
-
-					// Tant que le personnage ou le boss est en vie, le combat continue
-					while (monVoleur.EstVivant() && boss.EstVivant()) {
-						std::cout << monVoleur.getNom() << "				 | HP : " << monVoleur.getHP() << "			| Mana : " << monVoleur.getMana() << "\n";
-						std::cout << "Exp : " << monVoleur.getEXP() << " / " << monVoleur.getExpMax() << "\n";
-						std::cout << "\n";
-						std::cout << boss.getNom() << "				 | HP : " << boss.getHP() << "\n";
-						std::cout << "--------------------- " << "\n";
-						std::cout << "Que voulez-vous faire ?" << std::endl;
-						std::cout << "1. Attaquer			 | Degats : " << monVoleur.getATK() << std::endl;
-						std::cout << "2. Se mettre en position defense | Degats recus /2" << std::endl;
-						std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monVoleur.getQuantitePotionsHP() << std::endl;
-						std::cout << "4. Utiliser Potion de MP	 | MP + 50			| Quantité : " << monMagicien.getQuantitePotionsMana() << std::endl;
-
-						std::cout << "--------------------- " << "\n";
-						std::cout << "Compétences : " << "\n";
-						std::cout << "5. Coup Vampirique		 | Degats : " << monVoleur.getDamage("CoupVampirique") << "			| MP : " << monVoleur.getManaCost("CoupVampirique") << std::endl;
-						std::cout << "6. Lame Empoisonnée		 | Degats : " << monVoleur.getDamage("LameEmpoisonnée") << "			| MP : " << monVoleur.getManaCost("LameEmpoisonnée") << std::endl;
-						std::cout << "Votre choix : ";
-
-						// Menu d'attaque du Voleur contre le Boss
-						int choix;
-						std::cin >> choix;
-						std::cout << std::endl;
-						if (choix == 1) {
-							system("cls");
-							monVoleur.attaque(boss);
-						}
-						else if (choix == 2) {
-							system("cls");
-							monVoleur.Defense();
-						}
-						else if (choix == 3) {
-							system("cls");
-							monVoleur.utiliserPotion();
-						}
-						else if (choix == 4) {
-							system("cls");
-							monVoleur.potionMana();
-						}
-						else if (choix == 5) {
-							system("cls");
-							monVoleur.CoupVampirique(boss);
-						}
-						else if (choix == 6) {
-							system("cls");
-							monVoleur.LameEmpoisonnée(boss);
-						}
-						else {
-							std::cout << "Choix invalide. Veuillez saisir 1 pour attaquer, 2 pour se défendre, 3 pour utiliser une potion, ou 4 pour la compétence spéciale.\n";
-							continue;
-						}
-
-
-						// Mort du Boss donne de l'expérience et augmente le compteur de 1
-						if (!boss.EstVivant()) {
-							monVoleur.gagnerEXP(150 + i * (10 * i));
-							std::cout << "Le " << boss.getNom() << " est Mort !\n";
-							bossBattu++;
-							break;
-						}
-
-						// Attaque du Boss
-						boss.attaque(monVoleur);
-						std::cout << "--------------------- " << "\n";
-					}
-				}
-			}
-		}
 		// Sort de la boucle combat en cas de mort et retourne au menu
-		if (!monVoleur.EstVivant()) {
+		if (!personnage.EstVivant()) {
 			std::cout << "Vous êtes mort" << std::endl;
 			break;
 		}
 	}
 }
 
-// Combat avec une personnage Cleric
-void mainCleric() {
+//Focntion Rejouer
+bool Rejouer() {
+	int choix;
+	std::cout << "Voulez-vous rejouer ? (1 pour oui, 0 pour non) : ";
+	std::cin >> choix;
 
-	//Initialise un Cleric avec un constructeur
-	Cleric monCleric("Cleric", 1, 1000, 1000, 6, 15, 12, 0, 100, 80, 80);
-
-	//Variable pour faire des combats à la chaine et nommer les ennemies
-	int ennemisBattus = 0;
-	int bossBattu = 0;
-
-	//Boucle de combat avec 25 combats
-	for (int i = 1; i <= 25; i++) {
-
-		//Le nom de l'ennemi augmente de 1 avec i++
-		std::string nomGobelin = "Gobelin " + std::to_string(i);
-
-		//Initialise un ennemi avec un Constructeur (nom, hp, atk)
-		Personnage ennemi(nomGobelin, 50 + i * 20, 20 + i * 5);
-		std::cout << "--------------------- " << "\n";
-		std::cout << "Combat entre " << monCleric.getNom() << " et " << ennemi.getNom() << " !\n";
-
-		//Boucle de combat tant que mon perso ou l'aderversaire est en vie
-		while (monCleric.EstVivant() && ennemi.EstVivant()) {
-			std::cout << monCleric.getNom() << "				 | HP : " << monCleric.getHP() << "			| Mana : " << monCleric.getMana() << "\n";
-			std::cout << "Exp : " << monCleric.getEXP() << " / " << monCleric.getExpMax() << "\n";
-			std::cout << "\n";
-			std::cout << ennemi.getNom() << "			 | HP : " << ennemi.getHP() << "\n";
-			std::cout << "--------------------- " << "\n";
-			std::cout << "Que voulez-vous faire ?" << std::endl;
-			std::cout << "1. Attaquer			 | Degats : " << monCleric.getATK() << std::endl;
-			std::cout << "2. Se mettre en position defense | Degats recus /2" << std::endl;
-			std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monCleric.getQuantitePotionsHP() << std::endl;
-			std::cout << "4. Utiliser Potion de MP	 | MP + 50			| Quantité : " << monMagicien.getQuantitePotionsMana() << std::endl;
-
-			std::cout << "--------------------- " << "\n";
-			std::cout << "Compétences : " << "\n";
-			std::cout << "5. Heal				 | Heal : " << monCleric.getDamage("Heal") << "			| MP : " << monCleric.getManaCost("Heal") << std::endl;
-			std::cout << "6. Lumière Divine		 | Degats : " << monCleric.getDamage("LumièreDivine") << "			| MP : " << monCleric.getManaCost("LumièreDivine") << std::endl;
-			std::cout << "Votre choix : ";
-
-			//Menu d'attaque pour le Cleric envers le gobelin
-			int choix;
-			std::cin >> choix;
-			std::cout << std::endl;
-			if (choix == 1) {
-				system("cls");
-				monCleric.attaque(ennemi);
-			}
-			else if (choix == 2) {
-				system("cls");
-				monCleric.Defense();
-			}
-			else if (choix == 3) {
-				system("cls");
-				monCleric.utiliserPotion();
-			}
-			else if (choix == 4) {
-				system("cls");
-				monCleric.potionMana();
-			}
-			else if (choix == 5) {
-				system("cls");
-				monCleric.Heal(ennemi);
-			}
-
-			else if (choix == 6) {
-				system("cls");
-				monCleric.LumièreDivine(ennemi);
-			}
-			else {
-				std::cout << "Choix invalide. Veuillez saisir 1 pour attaquer, 2 pour se défendre, 3 pour utiliser une potion, ou 4 pour la compétence spéciale.\n";
-				continue;
-			}
-			//Le gobelin attaque
-			ennemi.attaque(monCleric);
-			std::cout << "--------------------- " << "\n";
-
-			//Si le gobelin meurt donne de l'experience et augmente la difficultée
-			if (!ennemi.EstVivant()) {
-				monCleric.gagnerEXP(150 + i * (10 * i));
-				ennemisBattus++;
-				if (ennemisBattus % 5 == 0) {
-
-					// Initialise le Boss
-					std::string nomBoss = "Boss " + std::to_string(bossBattu + 1);
-					Personnage boss(nomBoss, 500, 200);
-					std::cout << "--------------------- " << "\n";
-					std::cout << "Combat entre " << monCleric.getNom() << " et " << boss.getNom() << " !\n";
-
-					// Tant que le personnage ou le boss est en vie, le combat continue
-					while (monCleric.EstVivant() && boss.EstVivant()) {
-						std::cout << monCleric.getNom() << "				 | HP : " << monCleric.getHP() << "			| Mana : " << monCleric.getMana() << "\n";
-						std::cout << "Exp : " << monCleric.getEXP() << " / " << monCleric.getExpMax() << "\n";
-						std::cout << "\n";
-						std::cout << boss.getNom() << "				| HP : " << boss.getHP() << "\n";
-						std::cout << "--------------------- " << "\n";
-						std::cout << "Que voulez-vous faire ?" << std::endl;
-						std::cout << "1. Attaquer			 | Degats : " << monCleric.getATK() << std::endl;
-						std::cout << "2. Se mettre en position defense | Degats recus /2" << std::endl;
-						std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << monCleric.getQuantitePotionsHP() << std::endl;
-						std::cout << "4. Utiliser Potion de MP	 | MP + 50			| Quantité : " << monMagicien.getQuantitePotionsMana() << std::endl;
-
-						std::cout << "--------------------- " << "\n";
-						std::cout << "Compétences : " << "\n";
-						std::cout << "5. Heal				 | Heal : " << monCleric.getDamage("Heal") << "			| MP : " << monCleric.getManaCost("Heal") << std::endl;
-						std::cout << "6. Lumière Divine		 | Degats : " << monCleric.getDamage("LumièreDivine") << "			| MP : " << monCleric.getManaCost("LumièreDivine") << std::endl;
-						std::cout << "Votre choix : ";
-
-						// Menu d'attaque du Cleric contre le Boss
-						int choix;
-						std::cin >> choix;
-						std::cout << std::endl;
-						if (choix == 1) {
-							system("cls");
-							monCleric.attaque(boss);
-						}
-						else if (choix == 2) {
-							system("cls");
-							monCleric.Defense();
-						}
-						else if (choix == 3) {
-							system("cls");
-							monCleric.utiliserPotion();
-						}
-						else if (choix == 4) {
-							system("cls");
-							monCleric.Heal(boss);
-						}
-						else if (choix == 5) {
-							system("cls");
-							monCleric.potionMana();
-						}
-						else if (choix == 6) {
-							system("cls");
-							monCleric.LumièreDivine(boss);
-						}
-						else {
-							std::cout << "Choix invalide. Veuillez saisir 1 pour attaquer, 2 pour se défendre, 3 pour utiliser une potion, ou 4 pour la compétence spéciale.\n";
-							continue;
-						}
-
-
-						// Mort du Boss donne de l'expérience et augmente le compteur de 1
-						if (!boss.EstVivant()) {
-							monCleric.gagnerEXP(150 + i * (10 * i));
-							std::cout << "Le " << boss.getNom() << " est Mort !\n";
-							bossBattu++;
-							break;
-						}
-
-						// Attaque du Boss
-						boss.attaque(monCleric);
-						std::cout << "--------------------- " << "\n";
-					}
-				}
-			}
-		}
-		// Sort de la boucle combat en cas de mort et retourne au menu
-		if (!monCleric.EstVivant()) {
-			std::cout << "Vous êtes mort" << std::endl;
-			break;
-		}
+	//Si choisi autre que 0 et 1 renvoi la fonction rejouer et redemande
+	if (choix != 0 && choix != 1) {
+		std::cout << "Choix invalide. Veuillez saisir 1 pour oui ou 0 pour non." << std::endl;
+		return Rejouer();
 	}
-}
 
+	//Choisi 1 renvoie true
+	return (choix == 1);
+}
 
 //Fonction main
 int main() {
@@ -793,27 +330,27 @@ int main() {
 		switch (choice) {
 		case 1:
 			system("cls");
-			mainGuerrier();
+			combat(monGuerrier);
 			break;
 		case 2:
 			system("cls");
-			mainMagicien();
+			combat(monMagicien);
 			break;
 		case 3:
 			system("cls");
-			mainVoleur();
+			combat(monVoleur);
 			break;
 		case 4:
 			system("cls");
-			mainCleric();
+			combat(monCleric);
 			break;
 		default:
 			std::cout << "Choix invalide. Veuillez choisir une classe valide." << std::endl;
 			break;
 		}
 
-	//Appelle fonction rejouer
-		jouer = Rejouer(); 
+		//Appelle fonction rejouer
+		jouer = Rejouer();
 	}
 
 	return 0;
