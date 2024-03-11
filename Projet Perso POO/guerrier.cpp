@@ -3,16 +3,26 @@
 #include <cstdlib>
 
 void Guerrier::CoupTranchant(Personnage& ennemi) {
-    
-    int degats = this->getATK() * 2; // Dégâts doublés
+    int degats;
+    if (critBuff) {
+        degats = this->getATK() * 6;
+    }
+    else {
+        degats = this->getATK() * 2;
+    }
     std::cout << this->getNom() << " utilise Coup Tranchant sur " << ennemi.getNom() << " et inflige " << degats << " dégâts !" << std::endl;
     ennemi.recevoirDegats(degats);
-
 }
 
 void Guerrier::CoupDeBouclier(Personnage& ennemi) {
-   
-    int degats = this->getATK() * 1.5; // Dégâts triplés
+    int degats;
+    
+    if (critBuff) {
+        degats = this->getATK() * 4.5;
+    }
+    else {
+        degats = this->getATK() * 1.5;
+    }
     std::cout << this->getNom() << " utilise Coup De Bouclier sur " << ennemi.getNom() << " et inflige " << degats << " dégâts !" << std::endl;
     ennemi.recevoirDegats(degats);
 }
@@ -44,4 +54,9 @@ int Guerrier::getDamage(std::string spellName) {
         std::cout << "Sort inconnu !" << std::endl;
         return 0; // Retourne 0 pour les sorts inconnus
     }
+}
+
+void Guerrier::criDeGuerre()
+{
+    critBuff = true;
 }

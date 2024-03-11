@@ -6,6 +6,7 @@
 struct Item {
     std::string nom;
     int quantite;
+    int prix;
 
     inline std::string getNom() { return nom;}
     inline int getQuantite() { return quantite; }
@@ -52,8 +53,8 @@ public:
     void potionMana();
     bool utiliseMana(int manacost);
     void addItem(const Item& objet, int montantArgent);
-    void acheter(const Item& objet);
     void afficherInventaire() const;
+    void modifierArgent(int montant);
 
     
     size_t getQuantitePotionsHP() const;

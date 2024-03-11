@@ -181,6 +181,13 @@ void Personnage::potionMana() {
     }
 }
 
+void Personnage::modifierArgent(int montant) {
+    Or += montant;
+    if (Or < 0) {
+        Or = 0; // Assure que l'argent ne devienne jamais négatif
+    }
+}
+
 // Fonction pour perdre de la mana
 bool Personnage::utiliseMana(int manacost) {
     if (manacost > Mana) {
@@ -223,18 +230,18 @@ void Personnage::addItem(const Item& objet, int montantArgent) {
         if (item.nom == objet.nom) {
             // Si oui, ajoute simplement la quantité
             item.quantite += objet.quantite;
-            std::cout << "Vous obtenez : " << objet.quantite << " " << objet.nom << std::endl;
+            std::cout << "Vous obtenez : " << objet.quantite << " " << objet.nom << "et " << montantArgent << " d'Or" << std::endl;
             return;
         }
     }
     // Si l'objet n'est pas déjà dans l'inventaire, l'ajoute
     std::cout << "Vous obtenez : " << objet.quantite << " " << objet.nom << std::endl;
     inventaire.push_back(objet);
-
+                                          
     // Si un montant d'argent est spécifié, l'ajoute également à l'inventaire
     if (montantArgent > 0) {
         this->Or += montantArgent;
-        std::cout << "Gold : " << montantArgent << std::endl;
+ 
     }
 }
 

@@ -21,8 +21,10 @@ public:
     void CoupDeBouclier(Personnage& ennemi);
     int getManaCost(std::string spellName);
     int getDamage(std::string spellName);
+    void criDeGuerre();
 
 private:
+    bool critBuff;
     std::vector<std::string> inventaire;
 };
 

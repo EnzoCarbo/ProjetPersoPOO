@@ -6,18 +6,17 @@
 #include"magicien.h"
 #include"voleur.h"
 #include"cleric.h"
+#include"marchand.h"	
 
 
 
 //TO DO
 //Redondance code, combat / menu
 //Equilibrage
-//Sort du Guerrier
-//Merge inventaire + potion
-//Sytème de marchand
 //Systeme craft
 //Système Equipement 
 //Ne pas perdre un tour quand je sors de l'inventaire
+//Achat potion mana bug
 
 
 Guerrier monGuerrier("Guerrier", 1, 1200, 1200, 20, 1, 8, 0, 100, 20, 20);
@@ -37,31 +36,69 @@ void HUD(Personnage& personnage, Personnage& ennemie) {
 	std::cout << "Que voulez-vous faire ?" << std::endl;
 	std::cout << "1. Attaquer			 | Degats : " << personnage.getATK() << std::endl;
 	std::cout << "2. Se mettre en position defense | Degats recus /2" << std::endl;
-	std::cout << "3. Utiliser Potion de HP	 | HP + 200			| Quantité : " << personnage.getQuantitePotionsHP() << std::endl;
-	std::cout << "4. Utiliser Potion de MP	 | MP + 50			| Quantité : " << personnage.getQuantitePotionsMana() << std::endl;
+	std::cout << "3. Inventaire" << std::endl;
 	std::cout << "--------------------- " << "\n";
 	std::cout << "Compétences : " << "\n";
 	if (personnage.getNom() == "Guerrier") {
-		std::cout << "5. Coup Tranchant	 	 | Degats : " << monGuerrier.getDamage("CoupTranchant") << "			| MP : " << monGuerrier.getManaCost("CoupTranchant") << std::endl;
-		std::cout << "6. Coup De Bouclier	 	 | Degats : " << monGuerrier.getDamage("CoupDeBouclier") << "			| MP : " << monGuerrier.getManaCost("CoupDeBouclier") << std::endl;
+		std::cout << "4. Coup Tranchant	 	 | Degats : " << monGuerrier.getDamage("CoupTranchant") << "			| MP : " << monGuerrier.getManaCost("CoupTranchant") << std::endl;
+		std::cout << "5. Coup De Bouclier	 	 | Degats : " << monGuerrier.getDamage("CoupDeBouclier") << "			| MP : " << monGuerrier.getManaCost("CoupDeBouclier") << std::endl;
 	}
 	if (personnage.getNom() == "Magicien") {
-		std::cout << "5. Fire Bolt			 | Degats : " << monMagicien.getDamage("FireBolt") << "			| MP : " << monMagicien.getManaCost("FireBolt") << std::endl;
-		std::cout << "6. Siphon			 | Degats : " << monMagicien.getDamage("Siphon") << "			| MP : " << monMagicien.getManaCost("Siphon") << std::endl;
+		std::cout << "4. Fire Bolt			 | Degats : " << monMagicien.getDamage("FireBolt") << "			| MP : " << monMagicien.getManaCost("FireBolt") << std::endl;
+		std::cout << "5. Siphon			 | Degats : " << monMagicien.getDamage("Siphon") << "			| MP : " << monMagicien.getManaCost("Siphon") << std::endl;
 		if (personnage.getNiveau() >= 4) {
-			std::cout << "7. ThunderBolt			 | Degats : " << monMagicien.getDamage("ThunderBolt") << "			| MP : " << monMagicien.getManaCost("ThunderBolt") << std::endl;
+			std::cout << "6. ThunderBolt			 | Degats : " << monMagicien.getDamage("ThunderBolt") << "			| MP : " << monMagicien.getManaCost("ThunderBolt") << std::endl;
 		}
 	}
 	if (personnage.getNom() == "Voleur") {
-		std::cout << "5. Coup Vampirique		 | Degats : " << monVoleur.getDamage("CoupVampirique") << "			| MP : " << monVoleur.getManaCost("CoupVampirique") << std::endl;
-		std::cout << "6. Lame Empoisonnée		 | Degats : " << monVoleur.getDamage("LameEmpoisonnée") << "			| MP : " << monVoleur.getManaCost("LameEmpoisonnée") << std::endl;
+		std::cout << "4. Coup Vampirique		 | Degats : " << monVoleur.getDamage("CoupVampirique") << "			| MP : " << monVoleur.getManaCost("CoupVampirique") << std::endl;
+		std::cout << "5. Lame Empoisonnée		 | Degats : " << monVoleur.getDamage("LameEmpoisonnée") << "			| MP : " << monVoleur.getManaCost("LameEmpoisonnée") << std::endl;
 	}
 	if (personnage.getNom() == "Cleric") {
-		std::cout << "5. Heal				 | Heal : " << monCleric.getDamage("Heal") << "			| MP : " << monCleric.getManaCost("Heal") << std::endl;
-		std::cout << "6. Lumière Divine		 | Degats : " << monCleric.getDamage("LumièreDivine") << "			| MP : " << monCleric.getManaCost("LumièreDivine") << std::endl;
+		std::cout << "4. Heal				 | Heal : " << monCleric.getDamage("Heal") << "			| MP : " << monCleric.getManaCost("Heal") << std::endl;
+		std::cout << "5. Lumière Divine		 | Degats : " << monCleric.getDamage("LumièreDivine") << "			| MP : " << monCleric.getManaCost("LumièreDivine") << std::endl;
 	}
 	std::cout << "Votre choix : " << std::endl;
 }
+
+void menuMarchant(Personnage& personnage) {
+	Marchand marchand;
+	std::cout << "Un marchand apparaît !" << std::endl;
+	std::cout << "Or : " << personnage.getArgent() << std::endl;
+	marchand.afficherInventaire();
+	bool choixValide = false;
+	int choix;
+	do {
+		std::cin >> choix;
+		std::cout << std::endl;
+		if (std::cin.fail() || (choix < 1 || choix > 3)) {
+			std::cin.clear(); // Efface l'état d'erreur du flux
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore les caractères restants dans le flux
+			std::cout << "Choix invalide. Veuillez saisir un choix valide.\n";
+		}
+		else {
+			choixValide = true;
+		}
+	} while (!choixValide);
+
+	switch (choix) { // Utilisez la variable "choix" ici, pas une autre saisie
+	case 1:
+		system("cls");
+		marchand.acheter(personnage, "Potion de HP");
+		break;
+	case 2:
+		system("cls");
+		marchand.acheter(personnage, "Potion de Mana");
+		break;
+	case 3:
+		system("cls");
+		std::cout << "Vous décidez de continuer votre aventure !" << std::endl;
+		break; 
+	default:
+		break;
+	}
+}
+
 
 void menuInventaire(Personnage& personnage) {
 	personnage.afficherInventaire();
@@ -77,31 +114,31 @@ void menuInventaire(Personnage& personnage) {
 		personnage.potionMana();
 	}
 	else {
-		std::cout << "Choix invalide.\n";
+		system("cls");
 	}
 }
 
 void menuCombat(Personnage& personnage, Personnage& ennemi) {
-	bool choixValideBoss = false;
-	int choixBoss;
+	bool choixValide = false;
+	int choix;
 	do {
-		std::cin >> choixBoss;
+		std::cin >> choix;
 		std::cout << std::endl;
-		if (std::cin.fail() || (choixBoss < 1 || choixBoss > 7) || (choixBoss == 7 && monMagicien.getNiveau() < 4)) {
+		if (std::cin.fail() || (choix < 1 || choix > 7) || (choix == 7 && monMagicien.getNiveau() < 4)) {
 			std::cin.clear(); // Efface l'état d'erreur du flux
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore les caractères restants dans le flux
 			std::cout << "Choix invalide. Veuillez saisir un choix valide.\n";
 		}
 		else {
-			choixValideBoss = true;
+			choixValide = true;
 		}
-	} while (!choixValideBoss);
+	} while (!choixValide);
 
 	// Effacer l'écran après avoir fait un choix valide
 	system("cls");
 
 	if (personnage.getNom() == "Guerrier") {
-		switch (choixBoss) {
+		switch (choix) {
 		case 1:
 			monGuerrier.attaque(ennemi);
 			break;
@@ -112,12 +149,9 @@ void menuCombat(Personnage& personnage, Personnage& ennemi) {
 			menuInventaire(personnage);
 			break;
 		case 4:
-			monGuerrier.potionMana();
-			break;
-		case 5:
 			monGuerrier.CoupTranchant(ennemi);
 			break;
-		case 6:
+		case 5:
 			monGuerrier.CoupDeBouclier(ennemi);
 			break;
 		default:
@@ -126,7 +160,7 @@ void menuCombat(Personnage& personnage, Personnage& ennemi) {
 	}
 	// Exécuter l'action en fonction du choix
 	if (personnage.getNom() == "Magicien") {
-		switch (choixBoss) {
+		switch (choix) {
 		case 1:
 			monMagicien.attaque(ennemi);
 			break;
@@ -137,15 +171,12 @@ void menuCombat(Personnage& personnage, Personnage& ennemi) {
 			menuInventaire(personnage);
 			break;
 		case 4:
-			monMagicien.potionMana();
-			break;
-		case 5:
 			monMagicien.FireBolt(ennemi);
 			break;
-		case 6:
+		case 5:
 			monMagicien.Siphon(ennemi);
 			break;
-		case 7:
+		case 6:
 			monMagicien.ThunderBolt(ennemi);
 			break;
 		default:
@@ -153,7 +184,7 @@ void menuCombat(Personnage& personnage, Personnage& ennemi) {
 		}
 	}
 	if (personnage.getNom() == "Voleur") {
-		switch (choixBoss) {
+		switch (choix) {
 		case 1:
 			monVoleur.attaque(ennemi);
 			break;
@@ -164,12 +195,9 @@ void menuCombat(Personnage& personnage, Personnage& ennemi) {
 			menuInventaire(personnage);
 			break;
 		case 4:
-			monVoleur.potionMana();
-			break;
-		case 5:
 			monVoleur.CoupVampirique(ennemi);
 			break;
-		case 6:
+		case 5:
 			monVoleur.LameEmpoisonnée(ennemi);
 			break;
 		default:
@@ -177,7 +205,7 @@ void menuCombat(Personnage& personnage, Personnage& ennemi) {
 		}
 	}
 	if (personnage.getNom() == "Cleric") {
-		switch (choixBoss) {
+		switch (choix) {
 		case 1:
 			monCleric.attaque(ennemi);
 			break;
@@ -188,12 +216,9 @@ void menuCombat(Personnage& personnage, Personnage& ennemi) {
 			menuInventaire(personnage);
 			break;
 		case 4:
-			monCleric.potionMana();
-			break;
-		case 5:
 			monCleric.Heal(ennemi);
 			break;
-		case 6:
+		case 5:
 			monCleric.LumièreDivine(ennemi);
 			break;
 		default:
@@ -210,8 +235,8 @@ void combat(Personnage& personnage) {
 	
 	std::vector<Item> listLootChauveSouris = { {"Aile", 1},{"Dent", 2},{"Peau", 1} };
 	std::vector<Item> listLootGobelin = { {"Dague", 1},{"Bourse d'or", 2},{"Anneau", 1} };
-	std::vector<Item> listLootTroll = { {"Massue", 1},{"Casque", 2},{"Bottes", 1} };
-	std::vector<Item> listLootBoss = { {"Nez", 1},{"Oreille", 2},{"Peau", 1} };
+	std::vector<Item> listLootTroll = { {"Massue", 1},{"Casque", 2},{"Bottes", 1}, {"Potion de HP", 1} };
+	std::vector<Item> listLootBoss = { {"Nez", 1},{"Oreille", 2},{"Peau", 1}, {"Potion de HP", 2}, {"Potion de mana", 1} };
 	//Variable pour faire des combats à la chaine et nommer les ennemies
 	int ennemisBattus = 0;
 	int bossBattu = 0;
@@ -320,21 +345,22 @@ void combat(Personnage& personnage) {
 							// Réinitialisation du compteur de tours depuis le dernier coup spécial
 							toursDepuisDernierSpecial = 0;
 						}
+
 						std::cout << "--------------------- " << "\n";
 					}
+					menuMarchant(personnage);
 				}
+				
 			}
 		}
-		// Sort de la boucle combat en cas de mort et retourne au menu
-		if (!monMagicien.EstVivant()) {
-			std::cout << "Vous êtes mort" << std::endl;
-			break;
-		}
+	
+
 		// Sort de la boucle combat en cas de mort et retourne au menu
 		if (!personnage.EstVivant()) {
 			std::cout << "Vous êtes mort" << std::endl;
 			break;
 		}
+		
 	}
 }
 
