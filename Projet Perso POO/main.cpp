@@ -14,9 +14,11 @@
 //Redondance code, combat / menu
 //Equilibrage
 //Systeme craft
+//Integrer armes aux classes
 //Système Equipement 
 //Ne pas perdre un tour quand je sors de l'inventaire
 //Achat potion mana bug
+//Faire class ennemie au lieu de switch case
 
 
 Guerrier monGuerrier("Guerrier", 1, 1200, 1200, 20, 1, 8, 0, 100, 20, 20);
@@ -92,7 +94,7 @@ void menuMarchant(Personnage& personnage) {
 		break;
 	case 3:
 		system("cls");
-		std::cout << "Vous décidez de continuer votre aventure !" << std::endl;
+		std::cout << "Vous continuez votre aventure." << std::endl;
 		break; 
 	default:
 		break;
@@ -229,8 +231,7 @@ void menuCombat(Personnage& personnage, Personnage& ennemi) {
 
 
 void combat(Personnage& personnage) {
-
-	srand(time(nullptr));
+	srand(static_cast<unsigned int>(time(nullptr)));
 	//Initialise un Magicien avec un constructeur
 	
 	std::vector<Item> listLootChauveSouris = { {"Aile", 1},{"Dent", 2},{"Peau", 1} };

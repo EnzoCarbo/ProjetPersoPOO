@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="arme.cpp" />
     <ClCompile Include="cleric.cpp" />
     <ClCompile Include="guerrier.cpp" />
     <ClCompile Include="magicien.cpp" />
@@ -136,6 +137,7 @@
     <ClCompile Include="voleur.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="arme.h" />
     <ClInclude Include="cleric.h" />
     <ClInclude Include="guerrier.h" />
     <ClInclude Include="magicien.h" />

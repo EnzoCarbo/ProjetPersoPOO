@@ -1,6 +1,10 @@
 #include "guerrier.h"
 #include<iostream>
 #include <cstdlib>
+#include<string>
+
+
+
 
 void Guerrier::CoupTranchant(Personnage& ennemi) {
     int degats;

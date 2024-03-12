@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include "arme.h"
 
 struct Item {
     std::string nom;
@@ -29,6 +30,7 @@ private:
     bool EnDefense;
     int Or;
     std::vector<Item> inventaire;
+    Arme* armeEquipee;
    
     
 
@@ -56,6 +58,8 @@ public:
     void afficherInventaire() const;
     void modifierArgent(int montant);
 
+ 
+  
     
     size_t getQuantitePotionsHP() const;
     size_t getQuantitePotionsMana() const;

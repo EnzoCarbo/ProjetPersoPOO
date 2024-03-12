@@ -251,3 +251,6 @@ void Personnage::afficherInventaire() const {
         std::cout << "- " << item.nom << " (Quantité : " << item.quantite << ")" << std::endl;
     }
 }
+
+
+
