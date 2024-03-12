@@ -29,7 +29,7 @@ void HUD(Personnage& personnage, Personnage& ennemie) {
 	std::cout << personnage.getNom() << "			 | HP : " << personnage.getHP() << " / " << personnage.getHPMax() << "			| Mana : " << personnage.getMana() << " / " << personnage.getManaMax() << "\n";
 	std::cout << "Niveau : " << personnage.getNiveau() << std::endl;
 	std::cout << "Exp : " << personnage.getEXP() << " / " << personnage.getExpMax() << "\n";
-	std::cout << "Or :" << personnage.getArgent() << std::endl;
+	std::cout << "Or : " << personnage.getArgent() << std::endl;
  	std::cout << "\n";
 	std::cout << ennemie.getNom() << "			 | HP : " << ennemie.getHP() << "\n";
 	std::cout << "--------------------- " << "\n";

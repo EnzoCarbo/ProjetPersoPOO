@@ -230,7 +230,7 @@ void Personnage::addItem(const Item& objet, int montantArgent) {
         if (item.nom == objet.nom) {
             // Si oui, ajoute simplement la quantité
             item.quantite += objet.quantite;
-            std::cout << "Vous obtenez : " << objet.quantite << " " << objet.nom << "et " << montantArgent << " d'Or" << std::endl;
+            std::cout << "Vous obtenez : " << objet.quantite << " " << objet.nom <<  std::endl;
             return;
         }
     }
