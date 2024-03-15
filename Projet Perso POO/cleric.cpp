@@ -7,7 +7,7 @@ void Cleric::Heal(Personnage& cible) {
         return;
     }
 
-    //Soigne la cible de 100 HP plus son INT
+    //Soigne la cible de 200 HP plus son INT
     int soin = 200 + getINT(); 
     cible.recevoirSoins(soin);
     std::cout << this->getNom() << " utilise le sort de soin sur " << cible.getNom() << " et restaure " << soin << " points de vie !" << std::endl;
@@ -47,12 +47,11 @@ int Cleric::getManaCost(std::string spellName) {
     }
     else {
         std::cout << "Sort inconnu !" << std::endl;
-        return 0; // Retourne 0 pour les sorts inconnus
+        return 0;
     }
 }
 
 int Cleric::getDamage(std::string spellName) {
-    // Retourne les dégâts en fonction du nom du sort
     if (spellName == "Heal") {
         return this->getINT() + 200;
     }
@@ -64,6 +63,6 @@ int Cleric::getDamage(std::string spellName) {
     }
     else {
         std::cout << "Sort inconnu !" << std::endl;
-        return 0; // Retourne 0 pour les sorts inconnus
+        return 0; 
     }
 }

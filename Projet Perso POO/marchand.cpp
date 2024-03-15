@@ -4,7 +4,7 @@
 
 Marchand::Marchand() {
     vente.push_back({ "Potion de HP", 1, 10});
-    vente.push_back({ "Potion de Mana", 3, 10 });// Exemple de potion de vie
+    vente.push_back({ "Potion de Mana", 3, 10 });
 }
 
 void Marchand::afficherInventaire() const {
@@ -20,10 +20,10 @@ void Marchand::afficherInventaire() const {
 bool Marchand::acheter(Personnage& acheteur, const std::string& nomObjet) {
     for (Item& item : vente) {
         if (item.nom == nomObjet && item.quantite > 0) {
-            if (acheteur.getArgent() >= item.prix) { // Utilise le prix de l'objet
-                acheteur.addItem(item, 0); // Ajoute l'objet à l'inventaire du personnage
-                acheteur.modifierArgent(-item.prix); // Retire le prix de l'argent du personnage
-                item.quantite--; // Diminue la quantité de l'objet dans l'inventaire du marchand
+            if (acheteur.getArgent() >= item.prix) {
+                acheteur.addItem(item, 0); 
+                acheteur.modifierArgent(-item.prix); 
+                item.quantite--; 
                 std::cout << "Vous avez acheté " << item.nom << " pour " << item.prix << " pièces d'or." << std::endl;
                 afficherInventaire();
                 return true;

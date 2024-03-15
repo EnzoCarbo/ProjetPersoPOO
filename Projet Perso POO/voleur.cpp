@@ -31,6 +31,7 @@ void Voleur::CoupVampirique(Personnage& ennemi) {
 }
 
 int Voleur::getManaCost(std::string spellName) {
+
     // Retourne le coût en mana en fonction du nom du sort
     if (spellName == "LameEmpoisonnée") {
         return 40;
@@ -40,12 +41,12 @@ int Voleur::getManaCost(std::string spellName) {
     }
     else {
         std::cout << "Sort inconnu !" << std::endl;
-        return 0; // Retourne 0 pour les sorts inconnus
+        return 0;
     }
 }
 
 int Voleur::getDamage(std::string spellName) {
-    // Retourne les dégâts en fonction du nom du sort
+
     if (spellName == "LameEmpoisonnée") {
         return this->getATK() * 5;
     }

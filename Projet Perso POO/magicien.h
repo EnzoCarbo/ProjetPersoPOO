@@ -9,7 +9,7 @@ public:
         Personnage(nom, niveau, HP, HPMax, ATK, INT, DEX, exp, expmax, mana, manamax)
     {
         if (niveau >= 4) {
-            ThunderBolt(*this); // Débloque la nouvelle capacité si le niveau est supérieur ou égal à 4
+            ThunderBolt(*this);
         }
     }
 
@@ -22,7 +22,7 @@ public:
     void Siphon(Personnage& ennemi);
     void ThunderBolt(Personnage& ennemi);
     int getManaCost(std::string spellName);
-    int getDamage(std::string spellName); // Fonction pour obtenir les dégâts d'un sort
+    int getDamage(std::string spellName);
    
 
 private:

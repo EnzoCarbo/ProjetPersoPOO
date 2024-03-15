@@ -41,7 +41,6 @@ void Magicien::ThunderBolt(Personnage& ennemi) {
 }
 
 int Magicien::getManaCost(std::string spellName) {
-    // Retourne le coût en mana en fonction du nom du sort
     if (spellName == "FireBolt") {
         return 50;
     }
@@ -53,12 +52,11 @@ int Magicien::getManaCost(std::string spellName) {
     }
     else {
         std::cout << "Sort inconnu !" << std::endl;
-        return 0; // Retourne 0 pour les sorts inconnus
+        return 0;
     }
 }
 
 int Magicien::getDamage(std::string spellName) {
-    // Retourne les dégâts en fonction du nom du sort
     if (spellName == "FireBolt") {
         return this->getINT() * 5;
     }
@@ -70,7 +68,7 @@ int Magicien::getDamage(std::string spellName) {
     }
     else {
         std::cout << "Sort inconnu !" << std::endl;
-        return 0; // Retourne 0 pour les sorts inconnus
+        return 0;
     }
 }
 

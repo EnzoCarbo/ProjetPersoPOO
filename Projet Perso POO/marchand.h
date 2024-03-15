@@ -1,7 +1,5 @@
-#ifndef MARCHAND_H
-#define MARCHAND_H
-
-#include "personnage.h" // Incluez les en-têtes nécessaires
+#pragma once
+#include "personnage.h"
 
 class Marchand {
 private:
@@ -14,4 +12,3 @@ public:
     bool acheter(Personnage& acheteur, const std::string& nomObjet);
 };
 
-#endif // MARCHAND_H

@@ -9,12 +9,15 @@
 #include"marchand.h"	
 
 
+//Initialisation des classes
 Guerrier monGuerrier("Guerrier", 1, 1200, 1200, 20, 1, 8, 0, 100, 50, 50);
 Magicien monMagicien("Magicien", 1, 700, 700, 5, 20, 4, 0, 100, 200, 200);
 Voleur monVoleur("Voleur", 1, 800, 800, 10, 3, 15, 0, 100, 80, 80);
 Cleric monCleric("Cleric", 1, 1000, 1000, 6, 15, 10, 0, 100,1200, 1200);
 
 
+
+//Affichage de l'HUD pour tout les personnages
 void HUD(Personnage& personnage, Personnage& ennemie) {
 	std::cout << personnage.getNom() << "			 | HP : " << personnage.getHP() << " / " << personnage.getHPMax() << "			| Mana : " << personnage.getMana() << " / " << personnage.getManaMax() << "\n";
 	std::cout << "Niveau : " << personnage.getNiveau() << std::endl;
@@ -58,10 +61,13 @@ void HUD(Personnage& personnage, Personnage& ennemie) {
 	std::cout << "Votre choix : " << std::endl;
 }
 
+//Menu du marchant
 void menuMarchant(Personnage& personnage) {
 	Marchand marchand;
 	std::cout << "Un marchand apparaît !" << std::endl;
 	std::cout << "Or : " << personnage.getArgent() << std::endl;
+
+	//Affiche l'inventaire du marchant
 	marchand.afficherInventaire();
 	bool choixValide = false;
 	int choix;
@@ -69,8 +75,8 @@ void menuMarchant(Personnage& personnage) {
 		std::cin >> choix;
 		std::cout << std::endl;
 		if (std::cin.fail() || (choix < 1 || choix > 3)) {
-			std::cin.clear(); // Efface l'état d'erreur du flux
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore les caractères restants dans le flux
+			std::cin.clear();
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			std::cout << "Choix invalide. Veuillez saisir un choix valide.\n";
 		}
 		else {
@@ -78,7 +84,7 @@ void menuMarchant(Personnage& personnage) {
 		}
 	} while (!choixValide);
 
-	switch (choix) { // Utilisez la variable "choix" ici, pas une autre saisie
+	switch (choix) { 
 	case 1:
 		system("cls");
 		marchand.acheter(personnage, "Potion de HP");
@@ -96,7 +102,7 @@ void menuMarchant(Personnage& personnage) {
 	}
 }
 
-
+//Menu d'inventaire du personnage
 void menuInventaire(Personnage& personnage) {
 	personnage.afficherInventaire();
 	std::cout << "Veuillez choisir une action :\n";
@@ -115,6 +121,7 @@ void menuInventaire(Personnage& personnage) {
 	}
 }
 
+//Menu de combat des personnages
 void menuCombat(Personnage& personnage, Personnage& ennemi) {
 	bool choixValide = false;
 	int choix;
@@ -122,18 +129,17 @@ void menuCombat(Personnage& personnage, Personnage& ennemi) {
 		std::cin >> choix;
 		std::cout << std::endl;
 		if (std::cin.fail() || (choix < 1 || choix > 7) || (choix == 7 && monMagicien.getNiveau() < 4)) {
-			std::cin.clear(); // Efface l'état d'erreur du flux
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore les caractères restants dans le flux
+			std::cin.clear();
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			std::cout << "Choix invalide. Veuillez saisir un choix valide.\n";
 		}
 		else {
 			choixValide = true;
 		}
 	} while (!choixValide);
-
-	// Effacer l'écran après avoir fait un choix valide
 	system("cls");
 
+	//Les capacités changent en fonction de la classe
 	if (personnage.getNom() == "Guerrier") {
 		switch (choix) {
 		case 1:
@@ -162,7 +168,6 @@ void menuCombat(Personnage& personnage, Personnage& ennemi) {
 			break;
 		}
 	}
-	// Exécuter l'action en fonction du choix
 	if (personnage.getNom() == "Magicien") {
 		switch (choix) {
 		case 1:
@@ -244,18 +249,17 @@ void menuCombat(Personnage& personnage, Personnage& ennemi) {
 
 void combat(Personnage& personnage) {
 	srand(static_cast<unsigned int>(time(nullptr)));
-	//Initialise un Magicien avec un constructeur
 	
+	//Initialise le loot des ennemis 
 	std::vector<Item> listLootChauveSouris = { {"Aile", 1},{"Dent", 2},{"Peau", 1} };
 	std::vector<Item> listLootGobelin = { {"Dague", 1},{"Bourse d'or", 2},{"Anneau", 1} };
 	std::vector<Item> listLootTroll = { {"Massue", 1},{"Casque", 2},{"Bottes", 1}, {"Potion de HP", 1} };
 	std::vector<Item> listLootBoss = { {"Nez", 1},{"Oreille", 2},{"Peau", 1}, {"Potion de HP", 2}, {"Potion de mana", 1} };
-	//Variable pour faire des combats à la chaine et nommer les ennemies
 	int ennemisBattus = 0;
 	int bossBattu = 0;
-	int toursDepuisDernierSpecial = 0;
+	int atkboss = 0;
 
-	//Boucle de combat avec 25 combats
+	//Boucle de combat avec 25 combats avec une randomisation de 3 ennemis 
 	for (int i = 1; i <= 25; i++) {
 
 		int typeEnnemi = rand() % 3;
@@ -293,6 +297,7 @@ void combat(Personnage& personnage) {
 
 			//Menu d'attaque pour le Magicien envers le gobelin
 			menuCombat(personnage, ennemi);
+
 			//Le gobelin attaque
 			ennemi.attaque(personnage);
 			std::cout << "--------------------- " << "\n";
@@ -316,12 +321,12 @@ void combat(Personnage& personnage) {
 
 				int goldMob = rand() % 4 + 3;
 
-				// Ajouter cet objet à l'inventaire du personnage
+				// Ajouter le loot à l'inventaire du personnage
 				personnage.addItem(objetLoot, goldMob);
 				if (ennemisBattus % 5 == 0) {
 
 					// Initialise le Boss
-					std::string nomBoss = "Zemmour " + std::to_string(bossBattu + 1);
+					std::string nomBoss = "SUPER GOLEM " + std::to_string(bossBattu + 1);
 					Personnage boss(nomBoss, 500, 200);
 					std::cout << "--------------------- " << "\n";
 					std::cout << "Combat entre " << personnage.getNom() << " et " << boss.getNom() << " !\n";
@@ -350,13 +355,13 @@ void combat(Personnage& personnage) {
 
 						// Attaque du Boss
 						boss.attaque(personnage);
-						toursDepuisDernierSpecial++;
-						if (toursDepuisDernierSpecial == 3) {
+						atkboss++;
+						if (atkboss == 3) {
 							// Appel de la fonction pour le coup spécial du boss
-							boss.ExpulsionDuTerritoire(personnage);
+							boss.superSmash(personnage);
 
 							// Réinitialisation du compteur de tours depuis le dernier coup spécial
-							toursDepuisDernierSpecial = 0;
+							atkboss = 0;
 						}
 
 						std::cout << "--------------------- " << "\n";

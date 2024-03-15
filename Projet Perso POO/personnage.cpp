@@ -42,7 +42,9 @@ void Personnage::attaque(Personnage& cible)
     cible.recevoirDegats(ATK);
 }
 
-void Personnage::ExpulsionDuTerritoire(Personnage& cible) {
+//Fonction d'attaque pour l'IA
+
+void Personnage::superSmash(Personnage& cible) {
     std::cout << "--------------------- " << "\n";
     std::cout << nom << "utilise Expulsion Du Territoire " << cible.getNom() << std::endl;
     cible.recevoirDegats(ATK * 3);
@@ -125,7 +127,6 @@ void Personnage::Defense() {
 }
 
 void Personnage::utiliserPotion() {
-    // Vérifie si les points de vie actuels sont inférieurs au maximum
     if (HP < HPMax) {
         // Trouver une potion de vie dans l'inventaire
         auto it = std::find_if(inventaire.begin(), inventaire.end(), [](const Item& item) {
@@ -138,9 +139,9 @@ void Personnage::utiliserPotion() {
             if (HP > HPMax) {
                 HP = HPMax;
             }
-            it->quantite--; // Diminuer la quantité de potions de vie dans l'inventaire
+            it->quantite--;
             if (it->quantite == 0) {
-                inventaire.erase(it); // Supprimer la potion de vie si sa quantité atteint 0
+                inventaire.erase(it);
             }
         }
         else {
@@ -154,7 +155,6 @@ void Personnage::utiliserPotion() {
 
 
 void Personnage::potionMana() {
-    // Vérifie si les points de mana actuels sont inférieurs au maximum
     if (Mana < ManaMax) {
         // Trouver une potion de Mana dans l'inventaire
         auto it = std::find_if(inventaire.begin(), inventaire.end(), [](const Item& item) {
@@ -163,13 +163,13 @@ void Personnage::potionMana() {
 
         if (it != inventaire.end() && it->quantite > 0) {
             std::cout << nom << " utilise une potion de Mana et récupère 50 points de Mana.\n";
-            Mana += 80; // Vous pouvez ajuster la quantité de mana récupérée selon vos besoins
+            Mana += 80;
             if (Mana > ManaMax) {
                 Mana = ManaMax;
             }
-            it->quantite--; // Diminuer la quantité de potions de Mana dans l'inventaire
+            it->quantite--;
             if (it->quantite == 0) {
-                inventaire.erase(it); // Supprimer la potion de Mana si sa quantité atteint 0
+                inventaire.erase(it);
             }
         }
         else {
@@ -184,7 +184,7 @@ void Personnage::potionMana() {
 void Personnage::modifierArgent(int montant) {
     Or += montant;
     if (Or < 0) {
-        Or = 0; // Assure que l'argent ne devienne jamais négatif
+        Or = 0;
     }
 }
 
@@ -197,60 +197,63 @@ bool Personnage::utiliseMana(int manacost) {
 
     Mana -= manacost;
     if (Mana < 0) {
-        Mana = 0; // Assure que la mana ne devienne pas négative
+        Mana = 0;
     }
 
     std::cout << nom << " perd " << manacost << " points de Mana." << std::endl;
     return true;
 }
 
+//Fonction pour compter le nombre de potion HP dans le vecteur 
 size_t Personnage::getQuantitePotionsHP() const {
     size_t quantiteHP = 0;
     for (const Item& item : inventaire) {
-        if (item.nom == "Potion de HP") { // Accéder à l'attribut "nom" de l'objet "item"
-            quantiteHP += item.quantite; // Ajouter la quantité de potions de vie
+        if (item.nom == "Potion de HP") {
+            quantiteHP += item.quantite; 
         }
     }
     return quantiteHP;
 }
 
+//Fonction pour compter le nombre de potion Mana dans le vecteur 
 size_t Personnage::getQuantitePotionsMana() const {
     size_t quantiteMana = 0;
-    for (const Item& item : inventaire) { // Parcourir l'inventaire du personnage
-        if (item.nom == "Potion de Mana") { // Vérifier si l'objet est une potion de mana
-            quantiteMana += item.quantite; // Ajouter la quantité de potions de mana
+    for (const Item& item : inventaire) {
+        if (item.nom == "Potion de Mana") {
+            quantiteMana += item.quantite;
         }
     }
     return quantiteMana;
 }
 
+
+//Fonction pour ajouter des items au vecteurs
 void Personnage::addItem(const Item& objet, int montantArgent) {
-    // Vérifie si l'objet est déjà dans l'inventaire
     for (Item& item : inventaire) {
         if (item.nom == objet.nom) {
-            // Si oui, ajoute simplement la quantité
             item.quantite += objet.quantite;
             std::cout << "Vous obtenez : " << objet.quantite << " " << objet.nom <<  std::endl;
             return;
         }
     }
-    // Si l'objet n'est pas déjà dans l'inventaire, l'ajoute
     std::cout << "Vous obtenez : " << objet.quantite << " " << objet.nom << std::endl;
     inventaire.push_back(objet);
                                           
-    // Si un montant d'argent est spécifié, l'ajoute également à l'inventaire
     if (montantArgent > 0) {
         this->Or += montantArgent;
  
     }
 }
 
+//Fonction pour afficher les objets présents dans le vecteur
 void Personnage::afficherInventaire() const {
     std::cout << "Inventaire de " << nom << " :" << std::endl;
     for (const auto& item : inventaire) {
         std::cout << "- " << item.nom << " (Quantité : " << item.quantite << ")" << std::endl;
     }
 }
+
+
 
 void Personnage::ATKBuff(int valeur) { 
     this->ATK += valeur;

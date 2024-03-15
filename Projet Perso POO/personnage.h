@@ -43,7 +43,7 @@ public:
     bool EstVivant();
     
     void attaque(Personnage& cible);
-    void ExpulsionDuTerritoire(Personnage& cible);
+    void superSmash(Personnage& cible);
     void Defense();
     void recevoirDegats(int degats);
     void recevoirMP(int mana);
