@@ -9,22 +9,10 @@
 #include"marchand.h"	
 
 
-
-//TO DO
-//Redondance code, combat / menu
-//Equilibrage
-//Systeme craft
-//Integrer armes aux classes
-//Système Equipement 
-//Ne pas perdre un tour quand je sors de l'inventaire
-//Achat potion mana bug
-//Faire class ennemie au lieu de switch case
-
-
-Guerrier monGuerrier("Guerrier", 1, 1200, 1200, 20, 1, 8, 0, 100, 20, 20);
-Magicien monMagicien("Magicien", 1, 7100, 7100, 5, 20, 4, 0, 100, 10000, 10000);
-Voleur monVoleur("Voleur", 1, 1000, 1000, 10, 3, 15, 0, 100, 80, 80);
-Cleric monCleric("Cleric", 1, 1000, 1000, 6, 15, 10, 0, 100, 80, 80);
+Guerrier monGuerrier("Guerrier", 1, 1200, 1200, 20, 1, 8, 0, 100, 50, 50);
+Magicien monMagicien("Magicien", 1, 700, 700, 5, 20, 4, 0, 100, 200, 200);
+Voleur monVoleur("Voleur", 1, 800, 800, 10, 3, 15, 0, 100, 80, 80);
+Cleric monCleric("Cleric", 1, 1000, 1000, 6, 15, 10, 0, 100,1200, 1200);
 
 
 void HUD(Personnage& personnage, Personnage& ennemie) {
@@ -44,10 +32,14 @@ void HUD(Personnage& personnage, Personnage& ennemie) {
 	if (personnage.getNom() == "Guerrier") {
 		std::cout << "4. Coup Tranchant	 	 | Degats : " << monGuerrier.getDamage("CoupTranchant") << "			| MP : " << monGuerrier.getManaCost("CoupTranchant") << std::endl;
 		std::cout << "5. Coup De Bouclier	 	 | Degats : " << monGuerrier.getDamage("CoupDeBouclier") << "			| MP : " << monGuerrier.getManaCost("CoupDeBouclier") << std::endl;
+		if (personnage.getNiveau() >= 3) {
+			std::cout << "6. Cri de guerre	 	 | Degats : " << monGuerrier.getDamage("CriDeGuerre") << "			| MP : " << monGuerrier.getManaCost("CriDeGuerre") << std::endl;
+		}
 	}
 	if (personnage.getNom() == "Magicien") {
 		std::cout << "4. Fire Bolt			 | Degats : " << monMagicien.getDamage("FireBolt") << "			| MP : " << monMagicien.getManaCost("FireBolt") << std::endl;
 		std::cout << "5. Siphon			 | Degats : " << monMagicien.getDamage("Siphon") << "			| MP : " << monMagicien.getManaCost("Siphon") << std::endl;
+
 		if (personnage.getNiveau() >= 4) {
 			std::cout << "6. ThunderBolt			 | Degats : " << monMagicien.getDamage("ThunderBolt") << "			| MP : " << monMagicien.getManaCost("ThunderBolt") << std::endl;
 		}
@@ -59,6 +51,9 @@ void HUD(Personnage& personnage, Personnage& ennemie) {
 	if (personnage.getNom() == "Cleric") {
 		std::cout << "4. Heal				 | Heal : " << monCleric.getDamage("Heal") << "			| MP : " << monCleric.getManaCost("Heal") << std::endl;
 		std::cout << "5. Lumière Divine		 | Degats : " << monCleric.getDamage("LumièreDivine") << "			| MP : " << monCleric.getManaCost("LumièreDivine") << std::endl;
+		if (personnage.getNiveau() >= 4) {
+			std::cout << "6. Bénédiction	 	 | Degats : " << monCleric.getDamage("Benediction") << "			| MP : " << monCleric.getManaCost("Benediction") << std::endl;
+		}
 	}
 	std::cout << "Votre choix : " << std::endl;
 }
@@ -156,6 +151,13 @@ void menuCombat(Personnage& personnage, Personnage& ennemi) {
 		case 5:
 			monGuerrier.CoupDeBouclier(ennemi);
 			break;
+		case 6:
+			if (personnage.getNiveau() >= 3) {
+				monGuerrier.criDeGuerre();
+			}
+			else {
+				std::cout << "Ce sort n'est pas encore débloqué" << std::endl;
+			}
 		default:
 			break;
 		}
@@ -179,7 +181,13 @@ void menuCombat(Personnage& personnage, Personnage& ennemi) {
 			monMagicien.Siphon(ennemi);
 			break;
 		case 6:
-			monMagicien.ThunderBolt(ennemi);
+			if (personnage.getNiveau() >= 4) {
+			monMagicien.ThunderBolt(ennemi);;
+		}
+			  else {
+			std::cout << "Ce sort n'est pas encore débloqué" << std::endl;
+		}
+			
 			break;
 		default:
 			break;
@@ -218,11 +226,15 @@ void menuCombat(Personnage& personnage, Personnage& ennemi) {
 			menuInventaire(personnage);
 			break;
 		case 4:
-			monCleric.Heal(ennemi);
+			monCleric.Heal(personnage);
 			break;
 		case 5:
 			monCleric.LumièreDivine(ennemi);
 			break;
+		case 6:
+			if (personnage.getNiveau() >= 4) {
+			monCleric.Benediction(personnage);
+			}
 		default:
 			break;
 		}

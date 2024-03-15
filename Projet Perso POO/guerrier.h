@@ -8,9 +8,12 @@ class Guerrier : public Personnage
 public:
     
     Guerrier(std::string nom, int niveau, int HP, int HPMax, int ATK, int INT, int DEX, int exp, int expmax, int mana, int manamax) :
-        Personnage(nom, niveau, HP, HPMax, ATK, INT, DEX, exp, expmax, mana, manamax) 
+        Personnage(nom, niveau, HP, HPMax, ATK, INT, DEX, exp, expmax, mana, manamax)
     {
-
+        critBuff = false;
+        if (niveau > 4) {
+            criDeGuerre();
+        }
     }
     
 
@@ -22,7 +25,6 @@ public:
     void criDeGuerre();
 
 private:
-    Arme* arme;
     bool critBuff;
     std::vector<std::string> inventaire;
 };

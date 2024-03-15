@@ -30,7 +30,6 @@ private:
     bool EnDefense;
     int Or;
     std::vector<Item> inventaire;
-    Arme* armeEquipee;
    
     
 
@@ -57,6 +56,9 @@ public:
     void addItem(const Item& objet, int montantArgent);
     void afficherInventaire() const;
     void modifierArgent(int montant);
+    void ATKBuff(int valeur);
+    void DEXBuff(int valeur);
+    void INTBuff(int valeur);
 
  
   

@@ -1,5 +1,4 @@
 #include "cleric.h"
-
 #include<iostream>
 #include <cstdlib>
 
@@ -25,6 +24,16 @@ void Cleric::LumièreDivine(Personnage& ennemi) {
     ennemi.recevoirDegats(degats);
 }
 
+void Cleric::Benediction(Personnage& cible) {
+    if (!utiliseMana(20)) {
+        return;
+        ATKBuff(10);
+        INTBuff(10);
+        DEXBuff(10);
+    }
+
+}
+
 int Cleric::getManaCost(std::string spellName) {
     // Retourne le coût en mana en fonction du nom du sort
     if (spellName == "Heal") {
@@ -32,6 +41,9 @@ int Cleric::getManaCost(std::string spellName) {
     }
     else if (spellName == "LumièreDivine") {
         return 30;
+    }
+    else if (spellName == "Benediction") {
+        return 20;
     }
     else {
         std::cout << "Sort inconnu !" << std::endl;
@@ -46,6 +58,9 @@ int Cleric::getDamage(std::string spellName) {
     }
     else if (spellName == "LumièreDivine") {
         return this->getINT() * 3;
+    }
+    else if (spellName == "Benediction") {
+        return NULL;
     }
     else {
         std::cout << "Sort inconnu !" << std::endl;

@@ -134,7 +134,7 @@ void Personnage::utiliserPotion() {
 
         if (it != inventaire.end() && it->quantite > 0) {
             std::cout << nom << " utilise une potion de vie et récupère 200 points de vie.\n";
-            HP += 200;
+            HP += 250;
             if (HP > HPMax) {
                 HP = HPMax;
             }
@@ -163,7 +163,7 @@ void Personnage::potionMana() {
 
         if (it != inventaire.end() && it->quantite > 0) {
             std::cout << nom << " utilise une potion de Mana et récupère 50 points de Mana.\n";
-            Mana += 50; // Vous pouvez ajuster la quantité de mana récupérée selon vos besoins
+            Mana += 80; // Vous pouvez ajuster la quantité de mana récupérée selon vos besoins
             if (Mana > ManaMax) {
                 Mana = ManaMax;
             }
@@ -251,6 +251,22 @@ void Personnage::afficherInventaire() const {
         std::cout << "- " << item.nom << " (Quantité : " << item.quantite << ")" << std::endl;
     }
 }
+
+void Personnage::ATKBuff(int valeur) { 
+    this->ATK += valeur;
+    std::cout << " Votre attaque augmente de " << valeur << std::endl;
+}
+
+void Personnage::INTBuff(int valeur) {
+    this->INT += valeur;
+    std::cout << " Votre intelligence augmente de " << valeur << std::endl;
+}
+
+void Personnage::DEXBuff(int valeur) {
+    this->DEX += valeur;
+    std::cout << " Votre dextérité augmente de " << valeur << std::endl;
+}
+
 
 
 

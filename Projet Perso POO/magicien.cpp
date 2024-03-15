@@ -3,7 +3,6 @@
 #include <cstdlib>
 
 void Magicien::FireBolt(Personnage& ennemi) {
-
     if (!utiliseMana(50)) {   
         return;
     }
@@ -37,7 +36,7 @@ void Magicien::ThunderBolt(Personnage& ennemi) {
 
     //Dégats fois 5 basé sur la INT
     int degats = this->getINT() * 7;
-    std::cout << this->getNom() << " utilise FireBolt sur " << ennemi.getNom() << " et inflige " << degats << " dégâts !" << std::endl;
+    std::cout << this->getNom() << " utilise ThunderBolt sur " << ennemi.getNom() << " et inflige " << degats << " dégâts !" << std::endl;
     ennemi.recevoirDegats(degats);
 }
 
