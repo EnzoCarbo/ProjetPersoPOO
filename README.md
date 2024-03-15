@@ -1,6 +1,7 @@
 # **Projet B1 - Jeu d'Aventure Textuel en C++**
 
-Ce projet vous emmène dans une aventure textuelle captivante, où vous pourrez choisir parmi quatre classes différentes, affronter des ennemis redoutables, acquérir des compétences uniques et explorer un monde rempli de mystères. Plongez dans l'action et découvrez un univers riche en défis et en récompenses !
+Le but de ce projet est de créer un Jeu d'Aventure textuel codé entierement en C++.  
+Le joueur doit être capable de choisir une classe en début de partie et d'affronter plusieurs types d'ennemis.  
 
 ## **Fonctionnalités :**
 **Choix de Classe** : Sélectionnez parmi quatre classes distinctes, chacune avec ses propres statistiques et compétences spéciales.  
